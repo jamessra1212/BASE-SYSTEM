@@ -48,4 +48,3 @@ Route::prefix('sida')
     Route::post('main/user/ustat', [UserController::class, 'user_ustat'])->name('user.ustat');
     Route::delete('main/user/destroy', [UserController::class, 'user_destroy'])->name('user.destroy');
 });
-

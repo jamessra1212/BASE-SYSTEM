@@ -4,7 +4,7 @@
     <!-- Brand Logo Space -->
     <div class="sidebar-brand border-bottom border-secondary-subtle py-3 px-4 d-flex align-items-center" style="height: 56px; border-color: rgba(255,255,255,0.05) !important;">
         <a href="#" class="brand-link text-decoration-none d-flex align-items-center gap-2">
-            <span class="brand-text fw-bold text-white tracking-wider" style="font-size: 13px; letter-spacing: 1.5px; opacity: 0.9;">SIDA PORTAL</span>
+            <span class="brand-text fw-bold text-white tracking-wider" style="font-size: 13px; letter-spacing: 1.5px; opacity: 0.9;">PORTAL</span>
         </a>
     </div>
 
@@ -21,7 +21,7 @@
                     <!-- Active State: uses a minimal clean text accent color shift instead of a heavy background block -->
                     <a href="#" class="nav-link px-3 py-2 rounded d-flex align-items-center transition-all text-white fw-medium" style="font-size: 12.5px;">
                         <i class="nav-icon fas fa-file-alt me-2-5 text-center" style="width: 16px; font-size: 13px; color: #3b82f6;"></i>
-                        <span>Home</span>
+                        <span>Dashboard</span>
                     </a>
                 </li>
 
@@ -33,9 +33,9 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link px-3 py-2 rounded d-flex align-items-center transition-all text-white-50 hover-mini-item" style="font-size: 12.5px;">
-                        <i class="nav-icon fas fa-user-graduate me-2-5 text-center" style="width: 16px; font-size: 13px; opacity: 0.7;"></i>
-                        <span>Manage Applicants</span>
+                    <a href="{{ route('sida.menu.index') }}" class="nav-link px-3 py-2 rounded d-flex align-items-center transition-all text-white-50 hover-mini-item" style="font-size: 12.5px;">
+                        <i class="nav-icon fas fa-file-alt me-2-5 text-center" style="width: 16px; font-size: 13px; opacity: 0.7;"></i>
+                        <span>Manage Menu</span>
                     </a>
                 </li>
 

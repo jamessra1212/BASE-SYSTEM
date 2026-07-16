@@ -13,13 +13,16 @@
         </ul>
 
         <ul class="navbar-nav ms-auto align-items-center gap-2">
+
             <li class="nav-item d-none d-sm-inline-block">
                 <a class="nav-link text-secondary hover-bg rounded-circle d-flex align-items-center justify-content-center"
-                   data-lte-toggle="fullscreen"
+                   data-bs-toggle="offcanvas"
+                   data-bs-target="#offcanvasRight"
+                   aria-controls="offcanvasRight"
                    href="javascript:void(0)"
                    role="button"
                    style="width: 38px; height: 38px; transition: all 0.2s;">
-                    <i class="fas fa-expand-arrows-alt fs-5"></i>
+                    <i class="fas fa-bell fs-5"></i>
                 </a>
             </li>
 

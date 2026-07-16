@@ -6,7 +6,7 @@ use App\Http\Controllers\BackEnd\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('auth.sida.login');
 });
 
 
@@ -47,4 +47,6 @@ Route::prefix('sida')
     Route::post('main/user/upass', [UserController::class, 'user_upass'])->name('user.upass');
     Route::post('main/user/ustat', [UserController::class, 'user_ustat'])->name('user.ustat');
     Route::delete('main/user/destroy', [UserController::class, 'user_destroy'])->name('user.destroy');
+
+    Route::resource('main/menu', \App\Http\Controllers\MenuController::class);
 });

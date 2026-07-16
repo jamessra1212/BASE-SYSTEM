@@ -36,6 +36,7 @@ class MenuController extends Controller
     public function store(MenuFormRequest $request): JsonResponse
     {
 
+
         $valData = $request->validated();
         $menu = $this->menuService->create($valData);
 

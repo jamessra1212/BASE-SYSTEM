@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
     'public',
 ])]
 
-class sub_menu extends Model
+class Submenu extends Model
 {
     protected $table = 'su_submenus';
 }

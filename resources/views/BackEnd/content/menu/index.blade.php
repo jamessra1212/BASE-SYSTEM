@@ -58,8 +58,6 @@
                     const modal = new bootstrap.Modal(document.getElementById(modalId));
                     modal.show();
 
-
-
                     $('#' + modalId).on('hidden.bs.modal', function () {
                         isModalOpen = false;
                         $('#modal-body').html('');
@@ -75,65 +73,62 @@
         $(document).on('submit', '#form_menu', function(e) {
             e.preventDefault();
 
-            console.log('Form submission triggered');
-
-            let form = $(this);
+            let $form = $(this);
             let formData = new FormData(this);
+            let $submitBtn = $('#btn_save_menu');
+
+            // Reset error UI states
+            $form.find('.is-invalid').removeClass('is-invalid');
+            $form.find('.invalid-feedback').text('');
+            $('#modal_error_summary').addClass('d-none');
 
             $.ajax({
                 url: "{{ route('sida.menu.store') }}",
                 type: "POST",
                 data: formData,
+                contentType: false,
+                processData: false,
                 beforeSend: function () {
-                    $('#btn_save_menu').prop('disabled', true);
+                    $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1.5"></i> Saving...');
                 },
-
                 success: function(response) {
+                    toastr.success(response.message || 'Menu created successfully!');
 
-                    console.log(response);
-
-                    toastr.success(response.message);
-
+                    // Hide Modal
                     const modalEl = document.getElementById('MENU_ENTRY_MODAL');
                     const modal = bootstrap.Modal.getInstance(modalEl);
-
                     if (modal) {
                         modal.hide();
                     }
+
+                    // Reset form controls
+                    $form[0].reset();
 
                     // Refresh DataTable
                     if (window.LaravelDataTables && window.LaravelDataTables["tblMenu"]) {
                         window.LaravelDataTables["tblMenu"].ajax.reload(null, false);
                     }
-
                 },
-
                 error: function(xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
 
-                    console.log(xhr);
+                        $('#modal_error_summary').removeClass('d-none');
 
-                    if (xhr.responseJSON) {
-                        console.log(xhr.responseJSON);
+                        $.each(errors, function(key, messages) {
+                            let input = $form.find(`[name="${key}"]`);
+                            input.addClass('is-invalid');
+                            input.siblings('.invalid-feedback').text(messages[0]);
+                        });
+                    } else {
+                        toastr.error('An unexpected error occurred while saving the menu.');
+                        console.error(xhr.responseText);
                     }
-
-                    alert(xhr.responseText);
-
-                    // console.log(xhr.responseJSON);
-
-                    // if (xhr.status === 422) {
-                    //     $.each(xhr.responseJSON.errors, function(key, value) {
-                    //         console.log(key + ': ' + value[0]);
-                    //     });
-                    // }
-
-                    // toastr.error('Unable to save menu.');
                 },
-
                 complete: function() {
-                    $('#btn_save_menu').prop('disabled', false);
+                    $submitBtn.prop('disabled', false).html('<i class="fas fa-save me-1.5"></i> Save Menu');
                 }
             });
-
         });
     });
 

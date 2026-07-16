@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
     'order',
 ])]
 
-class menu extends Model
+class Menu extends Model
 {
     protected $table = 'su_menus';
 }

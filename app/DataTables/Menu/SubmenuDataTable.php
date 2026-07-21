@@ -24,8 +24,9 @@ use HasModernDataTable;
      * @param QueryBuilder<Submenu> $query Results from query() method.
      */
 
+    public ?string $slug = null;
+
     protected string $tableId = 'tblSubMenu';
-    protected string $slug;
 
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -39,13 +40,6 @@ use HasModernDataTable;
             ->setRowId('id');
     }
 
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
     /**
      * Get the query source of dataTable.
      *
@@ -54,15 +48,18 @@ use HasModernDataTable;
     public function query(Submenu $model): QueryBuilder
     {
         return $model->newQuery()
-        ->where('x_menu_id', $this->slug);
+            ->where('x_menu_id', $this->slug);
     }
-
     /**
      * Optional method if you want to use the html builder.
      */
     public function html(): HtmlBuilder
     {
-        return $this->applyModernHtmlSettings($this->builder());
+        return $this->applyModernHtmlSettings($this->builder())
+            ->ajax([
+                'url' => route('sida.menu.show', ['slug' => $this->slug ?? '']),
+                'type' => 'GET',
+            ]);
     }
 
     /**

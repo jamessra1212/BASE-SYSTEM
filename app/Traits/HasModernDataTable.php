@@ -19,29 +19,19 @@ trait HasModernDataTable
         return $builder
             ->setTableId($this->tableId ?? 'tblData')
             ->columns($this->getColumns())
-            ->minifiedAjax('', "
-                data.slug = '" . ($this->slug ?? '') . "';
-            ")
+            ->minifiedAjax()
             ->orderBy(0)
             ->parameters([
                 'autoWidth'  => false,
                 'width'      => '100%',
-
-                // Keeps your clean markup layout
                 'dom'        => "<'dt-modern-layout'l f>" .
                                 "<'table-responsive'tr>" .
                                 "<'dt-modern-layout dt-modern-footer'i p>",
-
-                // Changes pagination to only show Prev, Numbers, and Next
                 'pagingType' => 'simple_numbers',
-
-                // 1. Define the option values and their display labels
                 'lengthMenu' => [
                     [10, 25, 50, -1],
                     ['10 entries', '25 entries', '50 entries', 'All']
                 ],
-
-                // 2. Keep your language block with only the token
                 'language' => [
                     'search'            => '',
                     'searchPlaceholder' => 'Search...',

@@ -11,7 +11,7 @@
 
             <div class="px-4 pb-4 pt-3 overflow-hidden">
                 <div class="table-responsive">
-                    {{ $dataTable->table(['class' => 'table align-middle border-0 w-100 mb-0']) }}
+                    {{ $submenuDT->table(['class' => 'table align-middle border-0 w-100 mb-0']) }}
                 </div>
 
             </div>
@@ -20,4 +20,4 @@
     </div>
 </div>
 
-{{ $dataTable->scripts() }}
+{{ $submenuDT->scripts() }}

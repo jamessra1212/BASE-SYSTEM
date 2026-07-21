@@ -106,12 +106,12 @@
 
             isModalOpen = true;
             let modalId = 'SUBMENU_VIEW_MODAL';
+            let slug = $(this).data('slug');
 
             $.ajax({
-                url: '{{ route("sida.menu.show","slug") }}'.replace('slug',$(this).data('slug')),
+                url: '{{ route("sida.menu.modal", "slug") }}'.replace('slug', slug),
                 type: 'GET',
                 success: function (res) {
-
                     $('#modal-body').html(res);
 
                     const modal = new bootstrap.Modal(document.getElementById(modalId));
@@ -124,7 +124,7 @@
                 },
                 error: function(xhr) {
                     isModalOpen = false;
-                    toastr.error('Failed to load the application form.');
+                    toastr.error('Failed to load submenus.');
                 }
             });
         });

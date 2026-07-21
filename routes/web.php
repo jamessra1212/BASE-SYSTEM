@@ -3,6 +3,7 @@
 use App\Http\Controllers\BackEnd\LoginController;
 use App\Http\Controllers\BackEnd\MainController;
 use App\Http\Controllers\BackEnd\UserController;
+use App\Http\Controllers\MenuController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -49,4 +50,6 @@ Route::prefix('sida')
     Route::delete('main/user/destroy', [UserController::class, 'user_destroy'])->name('user.destroy');
 
     Route::resource('main/menu', \App\Http\Controllers\MenuController::class);
+
+    Route::get('main/menu/submenu-modal/{slug}', [MenuController::class, 'getSubmenuModal'])->name('sida.menu.modal');
 });

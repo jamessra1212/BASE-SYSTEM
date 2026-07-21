@@ -45,12 +45,18 @@ class MenuController extends Controller
         ]);
     }
 
+    public function getSubmenuModal(string $slug)
+    {
+        return view('BackEnd.content.menu.extras.subMenus', compact('slug'));
+    }
+
     /**
      * Display the specified resource.
      */
-    public function show(SubmenuDataTable $dataTable, string $slug)
+    public function show(SubmenuDataTable $submenuDT, string $slug)
     {
-        return $dataTable->setSlug($slug)->render('BackEnd.content.menu.extras.subMenus');
+        $submenuDT->slug = $slug;
+        return $submenuDT->ajax();
     }
 
     /**

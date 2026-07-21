@@ -21,7 +21,7 @@
 
         <main class="app-main py-4">
             <div class="app-content">
-                <div class="container-fluid">
+                <div class="container-fluid px-4">
                     @yield('content')
                 </div>
             </div>

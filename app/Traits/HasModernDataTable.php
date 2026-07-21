@@ -19,7 +19,9 @@ trait HasModernDataTable
         return $builder
             ->setTableId($this->tableId ?? 'tblData')
             ->columns($this->getColumns())
-            ->minifiedAjax()
+            ->minifiedAjax('', "
+                data.slug = '" . ($this->slug ?? '') . "';
+            ")
             ->orderBy(0)
             ->parameters([
                 'autoWidth'  => false,

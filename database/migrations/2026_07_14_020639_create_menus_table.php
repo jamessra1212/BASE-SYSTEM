@@ -21,7 +21,21 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->boolean('is_menu')->default(false);
             $table->boolean('is_dropdown')->default(false);
-            $table->integer('order')->unsigned();
+            $table->integer('order')->unsigned()->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('su_submenus', function (Blueprint $table) {
+            $table->id();
+            $table->string('slug')->unique();
+            $table->string('sub_menu_id');
+            $table->string('x_menu_id')->nullable()->constrained('su_menus')->onDelete('cascade');
+            $table->string('name');
+            $table->string('nav_name')->nullable();
+            $table->string('route');
+            $table->boolean('is_nav')->default(false);
+            $table->integer('sort')->unsigned()->nullable();
+            $table->boolean('public')->default(false);
             $table->timestamps();
         });
     }
@@ -32,5 +46,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('su_menus');
+        Schema::dropIfExists('su_submenus');
     }
 };

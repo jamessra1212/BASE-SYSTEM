@@ -1,16 +1,16 @@
 <?php
 
-namespace App\DataTables;
+namespace App\DataTables\Menu;
 
-use App\Models\menu;
+use App\Models\Menu;
 use App\Traits\HasModernDataTable;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use Yajra\DataTables\Html\Button;
+// use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
+// use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class MenuDataTable extends DataTable
@@ -33,7 +33,13 @@ use HasModernDataTable;
                     'menu' => $row
                 ])->render();
             })
-            ->rawColumns(['action'])
+            ->addColumn('submenus', function($data) {
+
+                return view('BackEnd.content.menu.extras.dtSubmenus', [
+                    'data' => $data
+                ])->render();
+            })
+            ->rawColumns(['action','submenus'])
             ->setRowId('id');
     }
 
@@ -42,9 +48,9 @@ use HasModernDataTable;
      *
      * @return QueryBuilder<menu>
      */
-    public function query(menu $model): QueryBuilder
+    public function query(Menu $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->newQuery()->with('submenus');
     }
 
     /**
@@ -79,6 +85,7 @@ use HasModernDataTable;
             Column::make('name')->title('Name'),
             Column::make('route')->title('Route'),
             Column::make('category')->title('Category'),
+            Column::computed('submenus')->title('Sub-Menus'),
             Column::computed('action')->title('Action')->addClass('text-center')->width(50),
         ];
     }

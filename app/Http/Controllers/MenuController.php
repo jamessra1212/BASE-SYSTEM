@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTables\MenuDataTable;
+use App\DataTables\Menu\MenuDataTable;
+use App\DataTables\Menu\SubmenuDataTable;
 use App\Http\Requests\MenuFormRequest;
-use App\Models\menu;
+use App\Models\Menu;
 use App\Services\BackEnd\MenuService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,8 +36,6 @@ class MenuController extends Controller
      */
     public function store(MenuFormRequest $request): JsonResponse
     {
-
-
         $valData = $request->validated();
         $menu = $this->menuService->create($valData);
 
@@ -49,17 +48,20 @@ class MenuController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(menu $menu)
+    public function show(SubmenuDataTable $dataTable, string $slug)
     {
-        //
+        return $dataTable->setSlug($slug)->render('BackEnd.content.menu.extras.subMenus');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(menu $menu)
+    public function edit($slug)
     {
-        //
+        return view('BackEnd.content.menu.extras.edit')->with([
+            'menu' => $this->menuService->findbySlug($slug)
+        ]);
+
     }
 
     /**

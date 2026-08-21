@@ -6,6 +6,7 @@ use App\DataTables\Menu\MenuDataTable;
 use App\DataTables\Menu\SubmenuDataTable;
 use App\Http\Requests\MenuFormRequest;
 use App\Models\Menu;
+use App\Models\Submenu;
 use App\Services\BackEnd\MenuService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,14 +19,36 @@ class MenuController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(MenuDataTable $dataTable)
+    public function index(MenuDataTable $menuDataTable, SubmenuDataTable $submenuDataTable)
     {
-        return $dataTable->render('BackEnd.content.menu.index');
+        return $menuDataTable->render('BackEnd.content.menu.index',compact('submenuDataTable'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // public function submenus(Request $request, string $slug)
+    // {
+    //     $menu = Menu::where('menu_id', $slug)->firstOrFail();
+
+    //     return datatables()
+    //         ->eloquent(
+    //             Submenu::where('x_menu_id', $slug)
+    //         )
+    //         ->addColumn('action', function ($row) {
+    //             return view(
+    //                 'BackEnd.content.menu.Submenu.su_action',
+    //                 compact('row')
+    //             );
+    //         })
+    //         ->rawColumns(['action'])
+    //         ->toJson();
+    // }
+
+    public function submenus(SubmenuDataTable $datatable, string $slug)
+    {
+        return $datatable
+            ->filter('menu', $slug)
+            ->make();
+    }
+
     public function create()
     {
         return view('BackEnd.content.menu.extras.entry');
@@ -45,18 +68,12 @@ class MenuController extends Controller
         ]);
     }
 
-    public function getSubmenuModal(string $slug)
-    {
-        return view('BackEnd.content.menu.extras.subMenus', compact('slug'));
-    }
-
     /**
      * Display the specified resource.
      */
-    public function show(SubmenuDataTable $submenuDT, string $slug)
+    public function show()
     {
-        $submenuDT->slug = $slug;
-        return $submenuDT->ajax();
+        //
     }
 
     /**

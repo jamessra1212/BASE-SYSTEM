@@ -49,7 +49,7 @@ Route::prefix('sida')
     Route::post('main/user/ustat', [UserController::class, 'user_ustat'])->name('user.ustat');
     Route::delete('main/user/destroy', [UserController::class, 'user_destroy'])->name('user.destroy');
 
-    Route::resource('main/menu', \App\Http\Controllers\MenuController::class);
+    Route::resource('main/menu', MenuController::class);
+    Route::get('main/menu/{slug}/submenus', [MenuController::class, 'submenus'])->name('menu.submenus');
 
-    Route::get('main/menu/submenu-modal/{slug}', [MenuController::class, 'getSubmenuModal'])->name('sida.menu.modal');
 });

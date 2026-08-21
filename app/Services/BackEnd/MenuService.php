@@ -62,7 +62,6 @@ class MenuService
                 return $menu;
             });
         } catch (\Exception $e) {
-            dd($e);
             throw new \RuntimeException('Failed to create menu: ' . $e->getMessage(), 0, $e);
         }
     }

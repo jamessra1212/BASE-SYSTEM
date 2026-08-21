@@ -107,40 +107,55 @@
 
             let slug = $(this).data("slug");
 
-            bootstrap.Modal.getOrCreateInstance(
+            let modal = new bootstrap.Modal(
                 document.getElementById("SUBMENU_VIEW_MODAL")
-            ).show();
+            );
 
-            if (!submenuTable) {
+            modal.show();
 
-                submenuTable = $("#tblSubMenu").DataTable({
-                    processing: true,
-                    serverSide: true,
+            if ($.fn.DataTable.isDataTable("#tblSubMenu")) {
 
-                    ajax: "/sida/main/menu/" + slug + "/submenus",
+                submenuTable.destroy();
 
-                    columns: [
-                        { data: "name" },
-                        { data: "nav_name" },
-                        { data: "route" },
-                        { data: "is_nav" },
-                        { data: "sort" },
-                        { data: "public" },
-                        {
-                            data: "action",
-                            orderable: false,
-                            searchable: false
-                        }
-                    ]
-                });
+                $("#tblSubMenu").empty();
 
-            } else {
-
-                submenuTable.ajax.url(
-                    "/sida/main/menu/" + slug + "/submenus"
-                ).load();
+                $("#tblSubMenu").html(`
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Navigation</th>
+                            <th>Route</th>
+                            <th>Is Nav</th>
+                            <th>Sort</th>
+                            <th>Public</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                `);
 
             }
+
+            submenuTable = $("#tblSubMenu").DataTable({
+
+                processing: true,
+
+                serverSide: true,
+
+                ajax: "/sida/main/menu/" + slug + "/submenus",
+
+                columns: [
+
+                    {data:"name"},
+                    {data:"nav_name"},
+                    {data:"route"},
+                    {data:"is_nav"},
+                    {data:"sort"},
+                    {data:"public"},
+                    {data:"action", orderable:false, searchable:false}
+
+                ]
+
+            });
 
         });
 

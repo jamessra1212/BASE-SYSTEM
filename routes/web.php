@@ -6,29 +6,29 @@ use App\Http\Controllers\BackEnd\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('auth.login');
 });
 
 
 Route::group(['prefix' => 'auth', 'as' => 'auth.'], function() {
     // Add ->middleware('guest') to these two routes
-    Route::get('sida/login', [LoginController::class, 'showLoginForm'])
+    Route::get('/login', [LoginController::class, 'showLoginForm'])
         ->middleware('portal.guest')
-        ->name('sida.login');
+        ->name('login');
 
-    Route::post('sida/login', [LoginController::class, 'login'])
+    Route::post('/login', [LoginController::class, 'login'])
         ->middleware('portal.guest')
-        ->name('sida.attempt');
+        ->name('attempt');
 
-    Route::post('sida/google', [LoginController::class, 'redirectToGoogle'])
-        ->name('sida.redirect');
+    Route::post('/google', [LoginController::class, 'redirectToGoogle'])
+        ->name('redirect');
 
-    Route::get('sida/google/callback', [LoginController::class, 'handleGoogleCallback'])
-        ->name('sida.callback');
+    Route::get('/google/callback', [LoginController::class, 'handleGoogleCallback'])
+        ->name('callback');
 
     // Do NOT add guest middleware to logout, otherwise logged-in users can't log out!
-    Route::post('sida/logout', [LoginController::class, 'logout'])
-        ->name('sida.logout');
+    Route::post('/logout', [LoginController::class, 'logout'])
+        ->name('logout');
 });
 
 Route::prefix('sida')
@@ -48,3 +48,5 @@ Route::prefix('sida')
     Route::post('main/user/ustat', [UserController::class, 'user_ustat'])->name('user.ustat');
     Route::delete('main/user/destroy', [UserController::class, 'user_destroy'])->name('user.destroy');
 });
+
+require __DIR__.'/admin.php';

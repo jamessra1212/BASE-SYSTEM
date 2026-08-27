@@ -108,7 +108,7 @@
                                 </div>
                                 <span class="fw-semibold" style="font-size: 14px;">Sign Out</span>
                             </a>
-                            <form id="frm-logout" action="{{ route('auth.sida.logout') }}" method="POST" style="display: none;">
+                            <form id="frm-logout" action="{{ route('auth.logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
                         </div>

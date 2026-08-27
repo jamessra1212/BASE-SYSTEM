@@ -17,27 +17,11 @@
                     Main Menu
                 </li>
 
-                <li class="nav-item">
-                    <!-- Active State: uses a minimal clean text accent color shift instead of a heavy background block -->
-                    <a href="#" class="nav-link px-3 py-2 rounded d-flex align-items-center transition-all text-white fw-medium" style="font-size: 12.5px;">
-                        <i class="nav-icon fas fa-file-alt me-2-5 text-center" style="width: 16px; font-size: 13px; color: #3b82f6;"></i>
-                        <span>Home</span>
-                    </a>
-                </li>
+                @php
+                    $menuTree = app(\App\Services\MenuService::class)->getMenuTreeForUser(auth()->user());
+                @endphp
 
-                <li class="nav-item">
-                    <a href="{{ route('sida.main.user') }}" class="nav-link px-3 py-2 rounded d-flex align-items-center transition-all text-white-50 hover-mini-item" style="font-size: 12.5px;">
-                        <i class="nav-icon fas fa-user me-2-5 text-center" style="width: 16px; font-size: 13px; opacity: 0.7;"></i>
-                        <span>Manage Users</span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link px-3 py-2 rounded d-flex align-items-center transition-all text-white-50 hover-mini-item" style="font-size: 12.5px;">
-                        <i class="nav-icon fas fa-user-graduate me-2-5 text-center" style="width: 16px; font-size: 13px; opacity: 0.7;"></i>
-                        <span>Manage Applicants</span>
-                    </a>
-                </li>
+                <x-menu-tree :items="$menuTree" />
 
             </ul>
         </nav>

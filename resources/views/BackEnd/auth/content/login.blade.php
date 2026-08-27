@@ -62,7 +62,7 @@
       </div>
 
       <div class="mt-4">
-        <form action="{{ route('auth.sida.redirect') }}" method="POST">
+        <form action="{{ route('auth.redirect') }}" method="POST">
           @csrf
           <button type="submit"
              class="w-full flex items-center justify-center gap-3 bg-stone-50 hover:bg-stone-100 text-stone-700 font-bold text-xs uppercase tracking-wider py-2.5 px-4 border border-stone-200 rounded-xl transition duration-200 shadow-sm">
@@ -82,7 +82,7 @@
         <span class="absolute bg-white px-3 text-[10px] font-bold uppercase tracking-widest text-stone-400">System Gateway</span>
       </div>
 
-      <form class="space-y-4" action="{{ route('auth.sida.attempt') }}" method="POST">
+      <form class="space-y-4" action="{{ route('auth.attempt') }}" method="POST">
         @csrf
 
         <div>

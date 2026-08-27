@@ -2,29 +2,25 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DataTables\RolesDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use Yajra\DataTables\Facades\DataTables;
 
 class RoleController extends Controller
 {
-    public function index()
+    public function index(RolesDataTable $dataTable)
     {
-        return view('admin.roles.index');
+        return $dataTable->render('admin.roles.index');
     }
 
-    public function data()
+    /**
+     * Returns the "new role" modal markup as HTML, loaded via AJAX.
+     */
+    public function entry()
     {
-        $roles = Role::withCount('permissions', 'users')->select('roles.*');
-
-        return DataTables::of($roles)
-            ->addColumn('actions', fn (Role $role) => '
-                <a href="' . route('sida.admin.roles.permissions', $role) . '" class="btn btn-sm btn-outline-primary">Menus</a>
-            ')
-            ->rawColumns(['actions'])
-            ->toJson();
+        return view('admin.roles._form');
     }
 
     public function store(Request $request)
@@ -32,7 +28,21 @@ class RoleController extends Controller
         $request->validate(['name' => ['required', 'string', 'max:255', 'unique:roles,name']]);
         Role::create(['name' => $request->name, 'guard_name' => 'web']);
 
-        return back()->with('success', 'Role created.');
+        return response()->json(['status' => 'success', 'message' => 'Role created.']);
+    }
+
+    public function destroy(Role $role)
+    {
+        if ($role->name === 'Super Admin') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The Super Admin role can\'t be deleted.',
+            ], 422);
+        }
+
+        $role->delete();
+
+        return response()->json(['status' => 'success', 'message' => 'Role deleted.']);
     }
 
     /**

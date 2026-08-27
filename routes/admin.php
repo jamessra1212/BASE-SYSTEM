@@ -30,6 +30,7 @@ Route::prefix('sida/admin')
             Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
             Route::get('roles/{role}/permissions', [RoleController::class, 'permissions'])->name('roles.permissions');
             Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
+            Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
         });
 
         Route::middleware('permission:manage users')->group(function () {

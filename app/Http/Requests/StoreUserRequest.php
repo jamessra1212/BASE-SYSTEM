@@ -49,7 +49,7 @@ class StoreUserRequest extends FormRequest
             'password'   => $isUpdate ? ['nullable', 'string', 'min:8', 'confirmed'] : ['required', 'string', 'min:8', 'confirmed'],
 
             'categories' => ['required', 'in:1,2'],
-            'roletype'   => ['required', 'in:1,2'],
+            'role' => ['nullable', 'string', 'exists:roles,name'],
         ];
     }
 

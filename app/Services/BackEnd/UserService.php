@@ -90,9 +90,12 @@ class UserService
                 if (!isset($validated['img_slug'])) {
                     $validated['img_slug'] = 'avatar-default.png';
                 }
-                $this->user->create($validated);
+                $userInstance = $this->user->create($validated);
                 $message = 'System User record has been processed and committed successfully.';
             }
+
+            // Sync the RBAC role (single-select: empty selection clears any existing role)
+            $userInstance->syncRoles($validated['role'] ?? []);
 
             return response()->json([
                 'status'  => 'success',

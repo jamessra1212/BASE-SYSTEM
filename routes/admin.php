@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserAccessController;
 use Illuminate\Support\Facades\Route;
@@ -36,5 +37,13 @@ Route::prefix('sida/admin')
         Route::middleware('permission:manage users')->group(function () {
             Route::get('users/access', [UserAccessController::class, 'index'])->name('users.access');
             Route::put('users/{user}/access', [UserAccessController::class, 'update'])->name('users.access.update');
+        });
+
+        Route::middleware('permission:manage permissions')->group(function () {
+            Route::get('permissions', [PermissionController::class, 'index'])->name('permissions.index');
+            Route::get('permissions/data', [PermissionController::class, 'data'])->name('permissions.data');
+            Route::get('permissions/entry', [PermissionController::class, 'entry'])->name('permissions.entry');
+            Route::post('permissions', [PermissionController::class, 'store'])->name('permissions.store');
+            Route::delete('permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
         });
     });

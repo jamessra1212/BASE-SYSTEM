@@ -41,12 +41,15 @@ Route::prefix('sida')
 
     Route::get('main/user', [UserController::class, 'main_user'])->name('main.user');
     Route::get('main/user/entry', [UserController::class, 'user_entry'])->name('user.entry');
-    Route::post('main/user/store', [UserController::class, 'user_store'])->name('user.store');
+    // Route::post('main/user/store', [UserController::class, 'user_store'])->name('user.store');
+    Route::post('main/user/store', [UserController::class, 'user_store'])->name('user.store')->middleware('perm:user.store');
+Route::delete('main/user/destroy', [UserController::class, 'user_destroy'])->name('user.destroy')->middleware('perm:user.destroy');
 
     Route::get('main/user/cpass', [UserController::class, 'user_cpass'])->name('user.cpass');
     Route::post('main/user/upass', [UserController::class, 'user_upass'])->name('user.upass');
     Route::post('main/user/ustat', [UserController::class, 'user_ustat'])->name('user.ustat');
-    Route::delete('main/user/destroy', [UserController::class, 'user_destroy'])->name('user.destroy');
+    // Route::delete('main/user/destroy', [UserController::class, 'user_destroy'])->name('user.destroy');
 });
+
 
 require __DIR__.'/admin.php';

@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-// use Database\Factories\UserFactory;
+
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,14 +36,9 @@ use Spatie\Permission\Traits\HasRoles;
 ])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable,HasRoles;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    use HasFactory, Notifiable, HasRoles;
+
     protected function casts(): array
     {
         return [
@@ -57,6 +51,29 @@ class User extends Authenticatable
     public function menuOverrides()
     {
         return $this->hasMany(\App\Models\MenuUserOverride::class);
+    }
+
+    public function permissionOverrides()
+    {
+        return $this->hasMany(\App\Models\PermissionUserOverride::class);
+    }
+
+    /**
+     * Override-aware permission check: a per-user allow/deny beats the
+     * role-based permission. Use this instead of $user->can() anywhere
+     * an individual exception (like Kevin losing user.destroy) matters.
+     */
+    public function canAccessPermission(string $permissionName): bool
+    {
+        $override = $this->permissionOverrides()
+            ->whereHas('permission', fn ($q) => $q->where('name', $permissionName))
+            ->first();
+
+        if ($override) {
+            return $override->access === 'allow';
+        }
+
+        return $this->can($permissionName);
     }
 }
 

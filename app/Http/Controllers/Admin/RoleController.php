@@ -6,6 +6,7 @@ use App\DataTables\RolesDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -46,31 +47,36 @@ class RoleController extends Controller
     }
 
     /**
-     * Show the checkbox tree of menus this role currently has permission for.
+     * Show the checkbox tree of menus, plus a plain checklist of
+     * action-level permissions, this role currently has.
      */
     public function permissions(Role $role)
     {
         $menus = Menu::with('children')->topLevel()->orderBy('order')->get();
+        $groupedActionPermissions = Permission::where('name', 'not like', 'menu.%')
+            ->orderBy('group')
+            ->orderBy('name')
+            ->get()
+            ->groupBy(fn ($permission) => $permission->group ?: 'General');
         $rolePermissionNames = $role->permissions->pluck('name');
 
-        return view('admin.roles.permissions', compact('role', 'menus', 'rolePermissionNames'));
+        return view('admin.roles.permissions', compact('role', 'menus', 'groupedActionPermissions', 'rolePermissionNames'));
     }
 
     /**
-     * Save which menus this role may see. Only touches "menu.*"
-     * permissions — any other permissions the role holds are preserved.
+     * Save which menus AND which action-level permissions this role has.
+     * This fully replaces the role's permission set with whatever was
+     * checked on the page — nothing is preserved beyond what's submitted.
      */
     public function updatePermissions(Request $request, Role $role)
     {
         $selectedMenuIds = collect($request->input('menu_ids', []))->map(fn ($id) => (int) $id);
-        $selectedPermissionNames = Menu::whereIn('id', $selectedMenuIds)->pluck('permission_name');
+        $selectedMenuPermissionNames = Menu::whereIn('id', $selectedMenuIds)->pluck('permission_name');
 
-        $nonMenuPermissions = $role->permissions
-            ->reject(fn ($permission) => str_starts_with($permission->name, 'menu.'))
-            ->pluck('name');
+        $selectedActionPermissionNames = collect($request->input('permission_names', []));
 
-        $role->syncPermissions($nonMenuPermissions->merge($selectedPermissionNames)->unique());
+        $role->syncPermissions($selectedMenuPermissionNames->merge($selectedActionPermissionNames)->unique());
 
-        return back()->with('success', "Menus updated for role \"{$role->name}\".");
+        return back()->with('success', "Permissions updated for role \"{$role->name}\".");
     }
 }

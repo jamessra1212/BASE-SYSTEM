@@ -15,6 +15,7 @@ class RolePermissionSeeder extends Seeder
             'manage roles',
             'manage menus',
             'manage users',
+            'manage permissions',
         ];
 
         foreach ($systemPermissions as $perm) {

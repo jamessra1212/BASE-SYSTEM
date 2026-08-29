@@ -91,7 +91,7 @@
                         </div>
 
                         <div class="p-2 bg-white">
-                            <a href="{{ route('sida.main.profile') }}" class="dropdown-item px-3 py-2 d-flex align-items-center text-secondary rounded-2 custom-menu-item">
+                            <a href="{{ route('app.main.profile') }}" class="dropdown-item px-3 py-2 d-flex align-items-center text-secondary rounded-2 custom-menu-item">
                                 <div class="bg-light text-muted rounded d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px;">
                                     <i class="fas fa-user-circle fs-6"></i>
                                 </div>
@@ -115,7 +115,7 @@
                     </div>
                 @else
                     <div class="dropdown-menu dropdown-menu-md dropdown-menu-end border-0 shadow-lg p-2 rounded-3 mt-2">
-                        <a href="{{ route('login') }}" class="btn btn-primary w-100 fw-bold py-2 small d-flex align-items-center justify-content-center gap-2">
+                        <a href="{{ route('auth.login') }}" class="btn btn-primary w-100 fw-bold py-2 small d-flex align-items-center justify-content-center gap-2">
                             <i class="fas fa-sign-in-alt"></i> Sign In to Portal
                         </a>
                     </div>

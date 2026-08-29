@@ -72,9 +72,9 @@
             </div>
 
             @if ($isEdit)
-                <input type="hidden" name="_action_url" value="{{ route('sida.admin.menus.update', $menu) }}">
+                <input type="hidden" name="_action_url" value="{{ route('core.menus.update', $menu) }}">
             @else
-                <input type="hidden" name="_action_url" value="{{ route('sida.admin.menus.store') }}">
+                <input type="hidden" name="_action_url" value="{{ route('core.menus.store') }}">
             @endif
         </form>
     </div>

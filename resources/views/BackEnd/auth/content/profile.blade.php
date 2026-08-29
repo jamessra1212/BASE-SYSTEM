@@ -221,7 +221,7 @@ function initProfileScripts($) {
         // Helper function to dispatch profile actions uniformly
         function dispatchProfileAction(payload, successCallback, errorCallback) {
             $.ajax({
-                url: '{{ route("sida.main.profile") }}',
+                url: '{{ route("app.main.profile") }}',
                 type: 'POST',
                 data: $.extend({}, payload, { _token: '{{ csrf_token() }}' }),
                 dataType: 'json',

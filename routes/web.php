@@ -34,8 +34,8 @@ use Illuminate\Support\Facades\Route;
             ->name('logout');
     });
 
-    Route::prefix('sida')
-        ->as('sida.')
+    Route::prefix('app')
+        ->as('app.')
         ->middleware(['portal.auth']) // 'web' is already applied automatically in web.php
     ->group(function () {
 

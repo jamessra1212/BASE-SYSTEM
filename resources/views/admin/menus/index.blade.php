@@ -42,7 +42,7 @@
                 isModalOpen = true;
 
                 $.ajax({
-                    url: '{{ route("sida.admin.menus.entry") }}',
+                    url: '{{ route("core.menus.entry") }}',
                     type: 'GET',
                     data: menuId ? { id: menuId } : {},
                     success: function (data) {
@@ -159,7 +159,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `/sida/admin/menus/${menuId}`,
+                            url: `/core/menus/${menuId}`,
                             type: 'DELETE',
                             data: { _token: '{{ csrf_token() }}' },
                             success: function (response) {

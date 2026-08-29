@@ -7,7 +7,7 @@
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
 
-<form method="POST" action="{{ route('sida.admin.roles.permissions.update', $role) }}">
+<form method="POST" action="{{ route('core.roles.permissions.update', $role) }}">
     @csrf
     @method('PUT')
 
@@ -56,6 +56,6 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Save</button>
-    <a href="{{ route('sida.admin.roles.index') }}" class="btn btn-outline-secondary">Back</a>
+    <a href="{{ route('core.roles.index') }}" class="btn btn-outline-secondary">Back</a>
 </form>
 @endsection

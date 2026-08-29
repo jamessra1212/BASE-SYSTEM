@@ -48,7 +48,7 @@
                 isModalOpen = true;
 
                 $.ajax({
-                    url: '{{ route("sida.admin.permissions.entry") }}',
+                    url: '{{ route("core.permissions.entry") }}',
                     type: 'GET',
                     success: function (data) {
                         $('#modal-body').html(data);
@@ -93,7 +93,7 @@
                 saveBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Saving...');
 
                 $.ajax({
-                    url: '{{ route("sida.admin.permissions.store") }}',
+                    url: '{{ route("core.permissions.store") }}',
                     type: 'POST',
                     data: form.serialize(),
                     success: function (response) {
@@ -153,7 +153,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `/sida/admin/permissions/${permissionId}`,
+                            url: `/core/permissions/${permissionId}`,
                             type: 'DELETE',
                             data: { _token: '{{ csrf_token() }}' },
                             success: function (response) {

@@ -43,7 +43,7 @@
                 isModalOpen = true;
 
                 $.ajax({
-                    url: '{{ route("sida.admin.roles.entry") }}',
+                    url: '{{ route("core.roles.entry") }}',
                     type: 'GET',
                     success: function (data) {
                         $('#modal-body').html(data);
@@ -88,7 +88,7 @@
                 saveBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Saving...');
 
                 $.ajax({
-                    url: '{{ route("sida.admin.roles.store") }}',
+                    url: '{{ route("core.roles.store") }}',
                     type: 'POST',
                     data: form.serialize(),
                     success: function (response) {
@@ -147,7 +147,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `/sida/admin/roles/${roleId}`,
+                            url: `/core/roles/${roleId}`,
                             type: 'DELETE',
                             data: { _token: '{{ csrf_token() }}' },
                             success: function (response) {

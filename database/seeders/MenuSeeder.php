@@ -10,16 +10,9 @@ class MenuSeeder extends Seeder
 {
     public function run(): void
     {
-        // updateOrCreate (not firstOrCreate) so reruns fix stale routes/icons
-        // instead of silently skipping existing rows.
-        $dashboard = Menu::updateOrCreate(
+        Menu::updateOrCreate(
             ['name' => 'Dashboard', 'parent_id' => null],
             ['icon' => 'fas fa-tachometer-alt', 'route' => 'sida.main.home', 'order' => 1]
-        );
-
-        Menu::updateOrCreate(
-            ['name' => 'Manage Users', 'parent_id' => null],
-            ['icon' => 'fas fa-user', 'route' => 'sida.main.user', 'order' => 2]
         );
 
         $settings = Menu::updateOrCreate(
@@ -29,17 +22,27 @@ class MenuSeeder extends Seeder
 
         Menu::updateOrCreate(
             ['name' => 'Menu Management', 'parent_id' => $settings->id],
-            ['icon' => 'fas fa-list', 'route' => 'sida.admin.menus.index', 'order' => 1]
+            ['icon' => 'fas fa-list', 'route' => 'core.menus.index', 'order' => 1]
         );
 
         Menu::updateOrCreate(
             ['name' => 'Roles & Permissions', 'parent_id' => $settings->id],
-            ['icon' => 'fas fa-user-shield', 'route' => 'sida.admin.roles.index', 'order' => 2]
+            ['icon' => 'fas fa-user-shield', 'route' => 'core.roles.index', 'order' => 2]
         );
 
         Menu::updateOrCreate(
             ['name' => 'User Access', 'parent_id' => $settings->id],
-            ['icon' => 'fas fa-user-lock', 'route' => 'sida.admin.users.access', 'order' => 3]
+            ['icon' => 'fas fa-user-lock', 'route' => 'core.users.access', 'order' => 3]
+        );
+
+        Menu::updateOrCreate(
+            ['name' => 'Manage Users', 'parent_id' => $settings->id],
+            ['icon' => 'fas fa-user', 'route' => 'core.users.index', 'order' => 4]
+        );
+
+        Menu::updateOrCreate(
+            ['name' => 'Permissions', 'parent_id' => $settings->id],
+            ['icon' => 'fas fa-key', 'route' => 'core.permissions.index', 'order' => 5]
         );
 
         // Give Super Admin every menu permission that exists so far.

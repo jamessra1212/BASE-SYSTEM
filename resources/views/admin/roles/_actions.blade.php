@@ -1,4 +1,4 @@
-<a href="{{ route('sida.admin.roles.permissions', $role) }}" class="btn btn-sm btn-outline-primary">
+<a href="{{ route('core.roles.permissions', $role) }}" class="btn btn-sm btn-outline-primary">
     Menus
 </a>
 @if ($role->name !== 'Super Admin')

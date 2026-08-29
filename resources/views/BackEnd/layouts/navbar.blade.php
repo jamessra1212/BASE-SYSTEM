@@ -38,7 +38,7 @@
                              height="30"
                              style="object-fit: cover;">
                     @else
-                        <img src="{{ asset('storage/avatars/avatar-default.png') }}"
+                        <img src="{{ asset('assets/img/userlogo.png') }}"
                              alt="Avatar"
                              class="rounded-circle bg-white border"
                              width="30"
@@ -67,7 +67,7 @@
                                          height="68"
                                          style="object-fit: cover;">
                                 @else
-                                    <img src="{{ asset('storage/avatars/avatar-default.png') }}"
+                                    <img src="{{ asset('assets/img/userlogo.png') }}"
                                          alt="Display Avatar"
                                          class="rounded-circle border border-2 border-white shadow-sm"
                                          width="68"
@@ -80,13 +80,7 @@
                                 {{ ucwords(strtolower(auth()->user()->fname ?? '')) }} {{ ucwords(strtolower(auth()->user()->lname ?? '')) }}
                             </h6>
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 mt-2 fw-medium text-uppercase tracking-wider" style="font-size: 10px;">
-                                @switch(auth()->user()->roletype)
-                                    @case(0) Pending Account @break
-                                    @case(1) Scholar @break
-                                    @case(2) HRDP Admin @break
-                                    @case(3) Super Admin @break
-                                    @default System Profile
-                                @endswitch
+                                {{ auth()->user()->roles->pluck('name')->join(', ') ?: 'None' }}
                             </span>
                         </div>
 

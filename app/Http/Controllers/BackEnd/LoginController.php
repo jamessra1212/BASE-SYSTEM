@@ -130,7 +130,7 @@ class LoginController extends Controller
             RateLimiter::clear($this->googleThrottleKey($request));
 
             return redirect()
-                ->route('main.profile')
+                ->route('app.main.profile')
                 ->with('success', 'Your Google account has been linked successfully!');
         }
 
@@ -185,7 +185,7 @@ class LoginController extends Controller
         $welcomeMessage = "Welcome back, {$firstName}! Logged in successfully.";
 
         return redirect()
-            ->route('sida.main.home')
+            ->route('app.main.home')
             ->with('success', $welcomeMessage);
     }
 

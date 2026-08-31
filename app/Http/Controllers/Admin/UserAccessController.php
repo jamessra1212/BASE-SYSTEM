@@ -12,9 +12,6 @@ use Spatie\Permission\Models\Permission;
 
 class UserAccessController extends Controller
 {
-    /**
-     * List/search users. Pick one via ?user= to edit their overrides.
-     */
     public function index(Request $request)
     {
         $users = User::query()
@@ -28,7 +25,8 @@ class UserAccessController extends Controller
         $selectedUser = null;
         $menus = collect();
         $overrides = collect();
-        $groupedActionPermissions = collect();
+        $permissionsByMenu = collect();
+        $unassignedGrouped = collect();
         $permissionOverrides = collect();
 
         if ($request->filled('user')) {
@@ -37,25 +35,22 @@ class UserAccessController extends Controller
             $menus = Menu::with('children')->topLevel()->orderBy('order')->get();
             $overrides = $selectedUser->menuOverrides()->pluck('access', 'menu_id');
 
-            $groupedActionPermissions = Permission::where('name', 'not like', 'menu.%')
-                ->orderBy('group')
-                ->orderBy('name')
-                ->get()
-                ->groupBy(fn ($permission) => $permission->group ?: 'General');
+            $actionPermissions = Permission::where('name', 'not like', 'menu.%')
+                ->orderBy('group')->orderBy('name')->get();
+
+            $permissionsByMenu = $actionPermissions->whereNotNull('menu_id')->groupBy('menu_id');
+            $unassignedGrouped = $actionPermissions->whereNull('menu_id')
+                ->groupBy(fn ($p) => $p->group ?: 'General');
+
             $permissionOverrides = $selectedUser->permissionOverrides()->pluck('access', 'permission_id');
         }
 
         return view('admin.users.access', compact(
             'users', 'selectedUser', 'menus', 'overrides',
-            'groupedActionPermissions', 'permissionOverrides'
+            'permissionsByMenu', 'unassignedGrouped', 'permissionOverrides'
         ));
     }
 
-    /**
-     * Save overrides for one user. Two independent override sets, both
-     * shaped the same way: [id] = "allow" | "deny" | "inherit", where
-     * "inherit" deletes any existing override row for that id.
-     */
     public function update(Request $request, User $user)
     {
         $request->validate([

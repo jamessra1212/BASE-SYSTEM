@@ -43,7 +43,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Named route (optional)</label>
-                    <input type="text" name="route" class="form-control" value="{{ $menu->route }}" placeholder="sida.main.home">
+                    <input type="text" name="route" class="form-control" value="{{ $menu->route }}" placeholder="app.main.home">
                     <div class="invalid-feedback"></div>
                 </div>
 

@@ -19,7 +19,19 @@
                 <div class="mb-3">
                     <label class="form-label">Group (optional)</label>
                     <input type="text" name="group" class="form-control" placeholder="e.g. User">
-                    <div class="form-text">Used to cluster related permissions on the Roles screen. Leave blank to auto-derive from the name (e.g. "user.store" → "User").</div>
+                    <div class="form-text">Used to cluster related permissions. Leave blank to auto-derive from the name.</div>
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Related Menu (optional)</label>
+                    <select name="menu_id" class="form-select">
+                        <option value="">— None —</option>
+                        @foreach ($menus as $menu)
+                            <option value="{{ $menu->id }}">{{ $menu->name }}</option>
+                        @endforeach
+                    </select>
+                    <div class="form-text">If set, this permission shows nested under that menu on the User Access and Roles pages instead of the flat "Other Permissions" list.</div>
                     <div class="invalid-feedback"></div>
                 </div>
             </div>

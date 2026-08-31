@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\DataTables\PermissionsDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
@@ -21,7 +22,9 @@ class PermissionController extends Controller
 
     public function entry()
     {
-        return view('admin.permissions._form');
+        $menus = Menu::orderBy('name')->get();
+
+        return view('admin.permissions._form', compact('menus'));
     }
 
     public function store(Request $request)
@@ -36,6 +39,7 @@ class PermissionController extends Controller
                 },
             ],
             'group' => ['nullable', 'string', 'max:100'],
+            'menu_id' => ['nullable', 'exists:menus,id'],
         ]);
 
         $group = $request->filled('group')
@@ -45,6 +49,7 @@ class PermissionController extends Controller
         Permission::create([
             'name' => $request->name,
             'group' => $group,
+            'menu_id' => $request->menu_id ?: null,
             'guard_name' => 'web',
         ]);
 

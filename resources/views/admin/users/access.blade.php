@@ -53,12 +53,15 @@
                         @method('PUT')
 
                         <h6 class="fw-bold mb-2">Menus</h6>
-                        <x-menu-override-tree :items="$menus" :overrides="$overrides" />
+                        <x-menu-override-tree :items="$menus" :overrides="$overrides"
+                            :permissionsByMenu="$permissionsByMenu" :permissionOverrides="$permissionOverrides" />
 
-                        <hr class="my-4">
-
-                        <h6 class="fw-bold mb-2">Other Permissions</h6>
-                        <x-permission-override-list :grouped="$groupedActionPermissions" :overrides="$permissionOverrides" />
+                        @if ($unassignedGrouped->isNotEmpty())
+                            <hr class="my-4">
+                            <h6 class="fw-bold mb-2">Other Permissions</h6>
+                            <p class="text-muted small">Permissions not linked to a specific menu.</p>
+                            <x-permission-override-list :grouped="$unassignedGrouped" :overrides="$permissionOverrides" />
+                        @endif
 
                         <button type="submit" class="btn btn-primary mt-3">Save Access</button>
                     </form>

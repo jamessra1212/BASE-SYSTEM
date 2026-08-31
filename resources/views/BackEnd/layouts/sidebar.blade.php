@@ -2,9 +2,17 @@
 <aside class="app-sidebar shadow-sm" data-bs-theme="dark" style="background-color: #111827; border-right: 1px solid rgba(255,255,255,0.03); width: 240px;">
 
     <!-- Brand Logo Space -->
-    <div class="sidebar-brand border-bottom border-secondary-subtle py-3 px-4 d-flex align-items-center" style="height: 56px; border-color: rgba(255,255,255,0.05) !important;">
-        <a href="#" class="brand-link text-decoration-none d-flex align-items-center gap-2">
-            <span class="brand-text fw-bold text-white tracking-wider" style="font-size: 13px; letter-spacing: 1.5px; opacity: 0.9;">SIDA PORTAL</span>
+    <div class="sidebar-brand border-bottom border-secondary-subtle" style="height: 56px; border-color: rgba(255,255,255,0.05) !important;">
+        <img src="{{ asset('assets/img/userlogo.png') }}"
+                         alt="Profile Identity"
+                         class="rounded-circle border bg-white p-2 shadow-sm"
+                         width="45"
+                         height="45"
+                         style="object-fit: cover;">
+        <a href="#" class="brand-link text-decoration-none d-flex gap-2">
+            <span class="brand-text fw-bold text-white tracking-wider" style="font-size: 13px; letter-spacing: 1.5px; opacity: 0.9;">
+                PORTAL
+            </span>
         </a>
     </div>
 

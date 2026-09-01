@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\UserAccessController;
 use App\Http\Controllers\BackEnd\LoginController;
 use App\Http\Controllers\BackEnd\MainController;
 use App\Http\Controllers\BackEnd\UserController;
-use App\Http\Controllers\MenuController;
 use Illuminate\Support\Facades\Route;
 
     Route::get('/', function () {

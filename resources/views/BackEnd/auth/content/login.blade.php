@@ -133,7 +133,7 @@
       </form>
 
       <div class="mt-4">
-        <form action="{{ route('auth.sida.redirect') }}" method="POST">
+        <form action="{{ route('auth.redirect') }}" method="POST">
           @csrf
           <button type="submit"
              class="w-full flex items-center justify-center gap-3 bg-stone-50 hover:bg-stone-100 text-stone-700 font-bold text-xs uppercase tracking-wider py-2.5 px-4 border border-stone-200 rounded-xl transition duration-200 shadow-sm">

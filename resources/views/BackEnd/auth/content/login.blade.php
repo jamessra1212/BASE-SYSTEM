@@ -69,7 +69,7 @@
         </span>
       </div>
 
-      <form class="space-y-4" action="{{ route('auth.sida.attempt') }}" method="POST">
+      <form class="space-y-4" action="{{ route('auth.attempt') }}" method="POST">
         @csrf
 
         <div>

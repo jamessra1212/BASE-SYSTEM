@@ -41,7 +41,7 @@
                              height="30"
                              style="object-fit: cover;">
                     @else
-                        <img src="{{ asset('storage/avatars/avatar-default.png') }}"
+                        <img src="{{ asset('assets/img/userlogo.png') }}"
                              alt="Avatar"
                              class="rounded-circle bg-white border"
                              width="30"
@@ -70,7 +70,7 @@
                                          height="68"
                                          style="object-fit: cover;">
                                 @else
-                                    <img src="{{ asset('storage/avatars/avatar-default.png') }}"
+                                    <img src="{{ asset('assets/img/userlogo.png') }}"
                                          alt="Display Avatar"
                                          class="rounded-circle border border-2 border-white shadow-sm"
                                          width="68"
@@ -83,18 +83,12 @@
                                 {{ ucwords(strtolower(auth()->user()->fname ?? '')) }} {{ ucwords(strtolower(auth()->user()->lname ?? '')) }}
                             </h6>
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 mt-2 fw-medium text-uppercase tracking-wider" style="font-size: 10px;">
-                                @switch(auth()->user()->roletype)
-                                    @case(0) Pending Account @break
-                                    @case(1) Scholar @break
-                                    @case(2) HRDP Admin @break
-                                    @case(3) Super Admin @break
-                                    @default System Profile
-                                @endswitch
+                                {{ auth()->user()->roles->pluck('name')->join(', ') ?: 'None' }}
                             </span>
                         </div>
 
                         <div class="p-2 bg-white">
-                            <a href="{{ route('sida.main.profile') }}" class="dropdown-item px-3 py-2 d-flex align-items-center text-secondary rounded-2 custom-menu-item">
+                            <a href="{{ route('app.main.profile') }}" class="dropdown-item px-3 py-2 d-flex align-items-center text-secondary rounded-2 custom-menu-item">
                                 <div class="bg-light text-muted rounded d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px;">
                                     <i class="fas fa-user-circle fs-6"></i>
                                 </div>
@@ -111,14 +105,14 @@
                                 </div>
                                 <span class="fw-semibold" style="font-size: 14px;">Sign Out</span>
                             </a>
-                            <form id="frm-logout" action="{{ route('auth.sida.logout') }}" method="POST" style="display: none;">
+                            <form id="frm-logout" action="{{ route('auth.logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
                         </div>
                     </div>
                 @else
                     <div class="dropdown-menu dropdown-menu-md dropdown-menu-end border-0 shadow-lg p-2 rounded-3 mt-2">
-                        <a href="{{ route('login') }}" class="btn btn-primary w-100 fw-bold py-2 small d-flex align-items-center justify-content-center gap-2">
+                        <a href="{{ route('auth.login') }}" class="btn btn-primary w-100 fw-bold py-2 small d-flex align-items-center justify-content-center gap-2">
                             <i class="fas fa-sign-in-alt"></i> Sign In to Portal
                         </a>
                     </div>

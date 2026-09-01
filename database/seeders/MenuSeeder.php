@@ -12,7 +12,7 @@ class MenuSeeder extends Seeder
     {
         Menu::updateOrCreate(
             ['name' => 'Dashboard', 'parent_id' => null],
-            ['icon' => 'fas fa-tachometer-alt', 'route' => 'sida.main.home', 'order' => 1]
+            ['icon' => 'fas fa-tachometer-alt', 'route' => 'app.main.home', 'order' => 1]
         );
 
         $settings = Menu::updateOrCreate(
@@ -32,7 +32,7 @@ class MenuSeeder extends Seeder
 
         Menu::updateOrCreate(
             ['name' => 'User Access', 'parent_id' => $settings->id],
-            ['icon' => 'fas fa-user-lock', 'route' => 'core.users.access', 'order' => 2]
+            ['icon' => 'fas fa-user-lock', 'route' => 'core.access.index', 'order' => 2]
         );
 
         Menu::updateOrCreate(

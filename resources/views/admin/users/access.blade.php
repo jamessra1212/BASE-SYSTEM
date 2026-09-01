@@ -27,7 +27,7 @@
     <div class="col-md-4">
         <div class="list-group">
             @forelse ($users as $user)
-                <a href="{{ route('core.users.access', ['user' => $user->id, 'q' => request('q')]) }}"
+                <a href="{{ route('core.access.index', ['user' => $user->id, 'q' => request('q')]) }}"
                     class="list-group-item list-group-item-action {{ $selectedUser?->id === $user->id ? 'active' : '' }}">
                     {{ $user->fullname }}
                     <div class="small {{ $selectedUser?->id === $user->id ? '' : 'text-muted' }}">{{ $user->email }}</div>
@@ -48,7 +48,7 @@
                         Roles: {{ $selectedUser->roles->pluck('name')->join(', ') ?: '— none —' }}
                     </p>
 
-                    <form method="POST" action="{{ route('core.users.access.update', $selectedUser) }}">
+                    <form method="POST" action="{{ route('core.access.update', $selectedUser) }}">
                         @csrf
                         @method('PUT')
 

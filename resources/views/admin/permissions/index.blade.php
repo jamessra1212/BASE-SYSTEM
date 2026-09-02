@@ -42,14 +42,14 @@
         document.addEventListener('DOMContentLoaded', function () {
             let isModalOpen = false;
 
-            $('#btn_add_permission').on('click', function (e) {
-                e.preventDefault();
+            function loadPermissionFormModal(permissionId = null) {
                 if (isModalOpen) return;
                 isModalOpen = true;
 
                 $.ajax({
                     url: '{{ route("core.permissions.entry") }}',
                     type: 'GET',
+                    data: permissionId ? { id: permissionId } : {},
                     success: function (data) {
                         $('#modal-body').html(data);
 
@@ -76,6 +76,16 @@
                         toastr.error(msg, 'System Error');
                     }
                 });
+            }
+
+            $('#btn_add_permission').on('click', function (e) {
+                e.preventDefault();
+                loadPermissionFormModal();
+            });
+
+            $(document).on('click', '.btn-edit-permission', function (e) {
+                e.preventDefault();
+                loadPermissionFormModal($(this).data('id'));
             });
 
             $(document).off('submit', '#form_permission_entry').on('submit', '#form_permission_entry', function (e) {
@@ -85,6 +95,7 @@
                 const saveBtn = $('#btn_save_permission');
                 const originalBtnHtml = saveBtn.html();
                 const errorSummary = $('#modal_error_summary');
+                const actionUrl = form.find('[name="_action_url"]').val();
 
                 form.find('.is-invalid').removeClass('is-invalid');
                 form.find('.invalid-feedback').text('');
@@ -93,8 +104,8 @@
                 saveBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Saving...');
 
                 $.ajax({
-                    url: '{{ route("core.permissions.store") }}',
-                    type: 'POST',
+                    url: actionUrl,
+                    type: 'POST', // Laravel reads @method('PUT') spoof field for edits
                     data: form.serialize(),
                     success: function (response) {
                         saveBtn.prop('disabled', false).html(originalBtnHtml);
@@ -111,12 +122,14 @@
                             if (window.LaravelDataTables && window.LaravelDataTables['tblPermissions']) {
                                 window.LaravelDataTables['tblPermissions'].ajax.reload(null, false);
                             }
+                        } else {
+                            toastr.error(response.message, 'Cannot Save');
                         }
                     },
                     error: function (xhr) {
                         saveBtn.prop('disabled', false).html(originalBtnHtml);
 
-                        if (xhr.status === 422) {
+                        if (xhr.status === 422 && xhr.responseJSON.errors) {
                             let errors = xhr.responseJSON.errors;
                             toastr.error('Please check the fields below.', 'Validation Error');
                             errorSummary.removeClass('d-none');
@@ -131,6 +144,7 @@
                         } else {
                             let msg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Something went wrong.';
                             toastr.error(msg, 'System Error');
+                            errorSummary.removeClass('d-none').text(msg);
                         }
                     }
                 });

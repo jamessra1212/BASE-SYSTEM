@@ -73,3 +73,17 @@
     </div>
 </div>
 @endsection
+
+@push('script')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('input[type="radio"][data-cascade-to]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            if (!this.checked) return;
+            var target = document.getElementById(this.dataset.cascadeTo);
+            if (target) target.checked = true;
+        });
+    });
+});
+</script>
+@endpush

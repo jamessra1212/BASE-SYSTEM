@@ -21,13 +21,8 @@ class MenuSeeder extends Seeder
         );
 
         Menu::updateOrCreate(
-            ['name' => 'Menu Management', 'parent_id' => $settings->id],
-            ['icon' => 'fas fa-list', 'route' => 'core.menus.index', 'order' => 3]
-        );
-
-        Menu::updateOrCreate(
-            ['name' => 'Roles & Permissions', 'parent_id' => $settings->id],
-            ['icon' => 'fas fa-user-shield', 'route' => 'core.roles.index', 'order' => 5]
+            ['name' => 'Manage Users', 'parent_id' => $settings->id],
+            ['icon' => 'fas fa-user', 'route' => 'core.users.index', 'order' => 1]
         );
 
         Menu::updateOrCreate(
@@ -36,13 +31,18 @@ class MenuSeeder extends Seeder
         );
 
         Menu::updateOrCreate(
-            ['name' => 'Manage Users', 'parent_id' => $settings->id],
-            ['icon' => 'fas fa-user', 'route' => 'core.users.index', 'order' => 1]
+            ['name' => 'Menu Management', 'parent_id' => $settings->id],
+            ['icon' => 'fas fa-list', 'route' => 'core.menus.index', 'order' => 3]
         );
 
         Menu::updateOrCreate(
             ['name' => 'Permissions', 'parent_id' => $settings->id],
             ['icon' => 'fas fa-key', 'route' => 'core.permissions.index', 'order' => 4]
+        );
+
+        Menu::updateOrCreate(
+            ['name' => 'Roles & Permissions', 'parent_id' => $settings->id],
+            ['icon' => 'fas fa-user-shield', 'route' => 'core.roles.index', 'order' => 5]
         );
 
         // Give Super Admin every menu permission that exists so far.

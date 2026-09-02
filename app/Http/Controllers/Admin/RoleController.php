@@ -47,20 +47,26 @@ class RoleController extends Controller
     }
 
     /**
-     * Show the checkbox tree of menus, plus a plain checklist of
-     * action-level permissions, this role currently has.
+     * Show the checkbox tree of menus (with related action-level
+     * permissions nested under each), plus a fallback flat list for
+     * permissions not linked to any menu.
      */
     public function permissions(Role $role)
     {
         $menus = Menu::with('children')->topLevel()->orderBy('order')->get();
-        $groupedActionPermissions = Permission::where('name', 'not like', 'menu.%')
-            ->orderBy('group')
-            ->orderBy('name')
-            ->get()
-            ->groupBy(fn ($permission) => $permission->group ?: 'General');
+
+        $actionPermissions = Permission::where('name', 'not like', 'menu.%')
+            ->orderBy('group')->orderBy('name')->get();
+
+        $permissionsByMenu = $actionPermissions->whereNotNull('menu_id')->groupBy('menu_id');
+        $unassignedGrouped = $actionPermissions->whereNull('menu_id')
+            ->groupBy(fn ($p) => $p->group ?: 'General');
+
         $rolePermissionNames = $role->permissions->pluck('name');
 
-        return view('admin.roles.permissions', compact('role', 'menus', 'groupedActionPermissions', 'rolePermissionNames'));
+        return view('admin.roles.permissions', compact(
+            'role', 'menus', 'permissionsByMenu', 'unassignedGrouped', 'rolePermissionNames'
+        ));
     }
 
     /**

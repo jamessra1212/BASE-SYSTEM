@@ -7,6 +7,12 @@
 @php
     $permissionsByMenu ??= collect();
     $permissionOverrides ??= collect();
+
+    // These are the "base access" permissions — allowing the menu implies
+    // allowing entry to the page, so checking the menu's Allow auto-checks
+    // this one too. Anything else nested under the menu (like menus.destroy)
+    // stays fully independent.
+    $baseAccessNames = ['manage menus', 'manage roles', 'manage users', 'manage permissions', 'manage access'];
 @endphp
 
 <ul class="list-unstyled ms-3">
@@ -14,6 +20,7 @@
         @php
             $current = $overrides->get($item->id, 'inherit');
             $relatedPermissions = $permissionsByMenu->get($item->id, collect());
+            $basePermission = $relatedPermissions->first(fn ($p) => in_array($p->name, $baseAccessNames));
         @endphp
         <li class="mb-2">
             <div class="d-flex align-items-center gap-3">
@@ -26,7 +33,8 @@
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio"
                             name="overrides[{{ $item->id }}]" id="ov-{{ $item->id }}-{{ $value }}"
-                            value="{{ $value }}" {{ $current === $value ? 'checked' : '' }}>
+                            value="{{ $value }}" {{ $current === $value ? 'checked' : '' }}
+                            @if ($value === 'allow' && $basePermission) data-cascade-to="pov-{{ $basePermission->id }}-allow" @endif>
                         <label class="form-check-label small" for="ov-{{ $item->id }}-{{ $value }}">{{ $label }}</label>
                     </div>
                 @endforeach

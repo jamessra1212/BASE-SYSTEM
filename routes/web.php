@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
@@ -96,6 +97,11 @@ use Illuminate\Support\Facades\Route;
             Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
 
             Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('perm:roles.destroy');
+        });
+
+        Route::middleware('perm:manage logs')->group(function () {
+            Route::get('logs', [LogController::class, 'index'])->name('logs.index');
+            Route::delete('logs', [LogController::class, 'clear'])->name('logs.clear')->middleware('perm:logs.clear');
         });
 
     });

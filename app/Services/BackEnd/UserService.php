@@ -97,6 +97,11 @@ class UserService
             // Sync the RBAC role (single-select: empty selection clears any existing role)
             $userInstance->syncRoles($validated['role'] ?? []);
 
+            activity()
+                ->causedBy($request->user())
+                ->performedOn($userInstance)
+                ->log("changed password for user \"{$userInstance->fullname}\"");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => $message
@@ -164,6 +169,11 @@ class UserService
 
             $statusText = $request->is_activated == 1 ? 'activated' : 'deactivated';
 
+            activity()
+                ->causedBy($request->user())
+                ->performedOn($userInstance)
+                ->log("{$statusText} user \"{$userInstance->fullname}\"");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => "The profile record has been successfully {$statusText}."
@@ -192,6 +202,14 @@ class UserService
                     'message' => 'Security policy breach: You cannot delete your own active administrative session context.'
                 ], 403);
             }
+
+            $userInstance = $this->findById($request->id);
+            $fullname = $userInstance->fullname;
+
+            activity()
+                ->causedBy($request->user())
+                ->performedOn($userInstance)
+                ->log("deleted user \"{$fullname}\"");
 
             // Execute the deletion directly on the returned Model instance
             $this->findById($request->id)->delete();

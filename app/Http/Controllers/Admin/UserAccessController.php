@@ -84,6 +84,11 @@ class UserAccessController extends Controller
             );
         }
 
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->log("updated access overrides for user \"{$user->fullname}\"");
+
         return back()->with('success', "Access updated for {$user->fullname}.");
     }
 }

@@ -14,10 +14,6 @@ class MenuController extends Controller
         return $dataTable->render('admin.menus.index');
     }
 
-    /**
-     * Returns the create/edit modal markup as HTML, loaded via AJAX
-     * (same pattern as sida.user.entry). Pass ?id= to load an existing menu.
-     */
     public function entry(Request $request)
     {
         $menu = $request->filled('id') ? Menu::findOrFail($request->id) : new Menu();
@@ -32,7 +28,12 @@ class MenuController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
-        Menu::create($data);
+        $menu = Menu::create($data);
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($menu)
+            ->log("created menu \"{$menu->name}\"");
 
         return response()->json(['status' => 'success', 'message' => 'Menu item created.']);
     }
@@ -42,11 +43,23 @@ class MenuController extends Controller
         $data = $this->validated($request, $menu->id);
         $menu->update($data);
 
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($menu)
+            ->log("updated menu \"{$menu->name}\"");
+
         return response()->json(['status' => 'success', 'message' => 'Menu item updated.']);
     }
 
     public function destroy(Menu $menu)
     {
+        $name = $menu->name;
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($menu)
+            ->log("deleted menu \"{$name}\"");
+
         $menu->delete(); // children auto-detach via nullOnDelete on parent_id
 
         return response()->json(['status' => 'success', 'message' => 'Menu item deleted.']);

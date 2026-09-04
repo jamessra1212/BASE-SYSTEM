@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Menu;
+use App\Core\Models\Menu;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -43,6 +43,11 @@ class MenuSeeder extends Seeder
         Menu::updateOrCreate(
             ['name' => 'Roles & Permissions', 'parent_id' => $settings->id],
             ['icon' => 'fas fa-user-shield', 'route' => 'core.roles.index', 'order' => 5]
+        );
+
+        Menu::updateOrCreate(
+            ['name' => 'Activity Logs', 'parent_id' => $settings->id],
+            ['icon' => 'fas fa-clipboard-list', 'route' => 'core.logs.index', 'order' => 6]
         );
 
         // Give Super Admin every menu permission that exists so far.

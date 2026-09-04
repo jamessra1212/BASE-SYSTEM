@@ -10,12 +10,14 @@ return new class extends Migration
     {
         Schema::table('permissions', function (Blueprint $table) {
             $table->string('group')->nullable()->after('name');
+            $table->foreignId('menu_id')->nullable()->after('group')->constrained('menus')->nullOnDelete();
         });
     }
 
     public function down(): void
     {
         Schema::table('permissions', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('menu_id');
             $table->dropColumn('group');
         });
     }

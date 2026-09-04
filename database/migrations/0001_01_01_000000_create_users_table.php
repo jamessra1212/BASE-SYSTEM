@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('img_slug')->nullable();
 
-            // Name fields - Restored!
+            // Name fields
             $table->string('fname')->nullable();
             $table->string('lname')->nullable();
             $table->string('minitial')->nullable();
@@ -31,7 +31,6 @@ return new class extends Migration
             // Identity & Roles
             $table->string('google_id')->nullable()->unique();
             $table->tinyInteger('categories')->default(0);
-            $table->tinyInteger('roletype')->default(0);
             $table->boolean('is_activated')->default(false);
 
             // Audit & Tracking

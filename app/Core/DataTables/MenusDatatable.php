@@ -33,7 +33,8 @@ class MenusDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->orderBy(3)
-            ->selectStyleSingle();
+            // ->selectStyleSingle()
+            ;
     }
 
     protected function getColumns(): array

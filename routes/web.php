@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\Admin\LogController;
-use App\Http\Controllers\Admin\MenuController;
-use App\Http\Controllers\Admin\PermissionController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\UserAccessController;
+use App\Core\Http\Controllers\LogController;
+use App\Core\Http\Controllers\MenuController;
+use App\Core\Http\Controllers\PermissionController;
+use App\Core\Http\Controllers\RoleController;
+use App\Core\Http\Controllers\UserAccessController;
 use App\Http\Controllers\BackEnd\LoginController;
 use App\Http\Controllers\BackEnd\MainController;
-use App\Http\Controllers\BackEnd\UserController;
+use App\Core\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
     Route::get('/', function () {

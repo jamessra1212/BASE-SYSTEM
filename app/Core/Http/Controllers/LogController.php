@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Core\Http\Controllers;
 
-use App\DataTables\LogsDataTable;
+use App\Core\DataTables\LogsDataTable;
 use App\Http\Controllers\Controller;
 use Spatie\Activitylog\Models\Activity;
 

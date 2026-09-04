@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Core\Services;
 
-use App\Models\Menu;
+use App\Core\Models\Menu;
 use App\Models\User;
 use Illuminate\Support\Collection;
 

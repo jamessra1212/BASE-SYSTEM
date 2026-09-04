@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Core\DataTables\Traits;
 
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 

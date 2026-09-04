@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Core\Http\Controllers;
 
-use App\DataTables\MenusDataTable;
+use App\Core\DataTables\MenusDataTable;
 use App\Http\Controllers\Controller;
-use App\Models\Menu;
+use App\Core\Models\Menu;
 use Illuminate\Http\Request;
 
 class MenuController extends Controller

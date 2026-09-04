@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Core\Http\Controllers;
 
-use App\DataTables\RolesDataTable;
+use App\Core\DataTables\RolesDataTable;
 use App\Http\Controllers\Controller;
-use App\Models\Menu;
+use App\Core\Models\Menu;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

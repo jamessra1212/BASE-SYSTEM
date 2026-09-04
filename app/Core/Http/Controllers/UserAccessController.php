@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Core\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Menu;
-use App\Models\MenuUserOverride;
-use App\Models\PermissionUserOverride;
+use App\Core\Models\Menu;
+use App\Core\Models\MenuUserOverride;
+use App\Core\Models\PermissionUserOverride;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;

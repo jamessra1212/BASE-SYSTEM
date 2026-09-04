@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Core\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +16,6 @@ class MenuUserOverride extends Model
 
     public function menu(): BelongsTo
     {
-        return $this->belongsTo(Menu::class);
+        return $this->belongsTo(\App\Core\Models\Menu::class);
     }
 }

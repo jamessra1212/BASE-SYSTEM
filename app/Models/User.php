@@ -50,12 +50,12 @@ class User extends Authenticatable
 
     public function menuOverrides()
     {
-        return $this->hasMany(\App\Models\MenuUserOverride::class);
+        return $this->hasMany(\App\Core\Models\MenuUserOverride::class);
     }
 
     public function permissionOverrides()
     {
-        return $this->hasMany(\App\Models\PermissionUserOverride::class);
+        return $this->hasMany(\App\Core\Models\PermissionUserOverride::class);
     }
 
     /**

@@ -18,7 +18,7 @@
                 </li>
 
                 @php
-                    $menuTree = app(\App\Services\MenuService::class)->getMenuTreeForUser(auth()->user());
+                    $menuTree = app(\App\Core\Services\MenuService::class)->getMenuTreeForUser(auth()->user());
                 @endphp
 
                 <x-menu-tree :items="$menuTree" />

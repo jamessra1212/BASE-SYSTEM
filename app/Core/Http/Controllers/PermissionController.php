@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Core\Http\Controllers;
 
-use App\DataTables\PermissionsDataTable;
+use App\Core\DataTables\PermissionsDataTable;
 use App\Http\Controllers\Controller;
-use App\Models\Menu;
+use App\Core\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;

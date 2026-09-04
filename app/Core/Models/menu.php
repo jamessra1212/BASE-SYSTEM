@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Core\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -63,7 +63,7 @@ class Menu extends Model
 
     public function overrides(): HasMany
     {
-        return $this->hasMany(MenuUserOverride::class);
+        return $this->hasMany(\App\Core\Models\MenuUserOverride::class);
     }
 
     public function scopeActive($query)

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTables;
+namespace App\Core\DataTables;
 
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Models\Activity;

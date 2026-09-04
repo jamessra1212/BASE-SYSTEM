@@ -1,8 +1,8 @@
 <?php
 
-namespace App\DataTables;
+namespace App\Core\DataTables;
 
-use App\Models\Menu;
+use App\Core\Models\Menu;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;

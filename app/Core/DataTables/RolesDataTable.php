@@ -2,6 +2,7 @@
 
 namespace App\Core\DataTables;
 
+use App\Core\DataTables\Traits\HasCoreDataTable;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\EloquentDataTable;
@@ -10,6 +11,14 @@ use Yajra\DataTables\Services\DataTable;
 
 class RolesDataTable extends DataTable
 {
+
+    use HasCoreDataTable;
+    
+    protected function tableId(): string
+    {
+        return 'tblRoles'; // or 'tblPermissions'
+    }
+
     public function dataTable($query)
     {
         return (new EloquentDataTable($query))
@@ -25,16 +34,6 @@ class RolesDataTable extends DataTable
         return $model->newQuery()->withCount(['permissions', 'users']);
     }
 
-    public function html()
-    {
-        return $this->builder()
-            ->setTableId('tblRoles')
-            ->columns($this->getColumns())
-            ->minifiedAjax()
-            ->orderBy(0)
-            ->selectStyleSingle();
-    }
-
     protected function getColumns(): array
     {
         return [
@@ -45,8 +44,4 @@ class RolesDataTable extends DataTable
         ];
     }
 
-    protected function filename(): string
-    {
-        return 'Roles_' . date('YmdHis');
-    }
 }

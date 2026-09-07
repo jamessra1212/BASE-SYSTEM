@@ -2,6 +2,7 @@
 
 namespace App\Core\DataTables;
 
+use App\Core\DataTables\Traits\HasCoreDataTable;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Models\Activity;
 use Yajra\DataTables\EloquentDataTable;
@@ -10,6 +11,24 @@ use Yajra\DataTables\Services\DataTable;
 
 class LogsDataTable extends DataTable
 {
+
+    use HasCoreDataTable;
+    
+    protected function tableId(): string
+    {
+        return 'tblLogs';
+    }
+
+    protected function defaultOrderColumn(): int
+    {
+        return 3;
+    }
+
+    protected function defaultOrderDirection(): string
+    {
+        return 'desc';
+    }
+
     public function dataTable($query)
     {
         return (new EloquentDataTable($query))

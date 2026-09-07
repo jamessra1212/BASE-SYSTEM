@@ -132,7 +132,7 @@
         </div>
       </form>
 
-      <div class="mt-4">
+      {{-- <div class="mt-4">
         <form action="{{ route('auth.redirect') }}" method="POST">
           @csrf
           <button type="submit"
@@ -146,7 +146,7 @@
             <span>Continue with Google</span>
           </button>
         </form>
-      </div>
+      </div> --}}
 
       {{-- <div class="p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-2.5">
         <svg class="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

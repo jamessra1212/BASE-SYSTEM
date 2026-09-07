@@ -2,6 +2,7 @@
 
 namespace App\Core\DataTables;
 
+use App\Core\DataTables\Traits\HasCoreDataTable;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\Models\Permission;
 use Yajra\DataTables\EloquentDataTable;
@@ -10,6 +11,14 @@ use Yajra\DataTables\Services\DataTable;
 
 class PermissionsDataTable extends DataTable
 {
+
+    use HasCoreDataTable;
+
+    protected function tableId(): string
+    {
+        return 'tblPermissions';
+    }
+    
     public function dataTable($query)
     {
         return (new EloquentDataTable($query))
@@ -28,16 +37,6 @@ class PermissionsDataTable extends DataTable
             ->orderBy('name');
     }
 
-    public function html()
-    {
-        return $this->builder()
-            ->setTableId('tblPermissions')
-            ->columns($this->getColumns())
-            ->minifiedAjax()
-            ->orderBy(0)
-            ->selectStyleSingle();
-    }
-
     protected function getColumns(): array
     {
         return [
@@ -48,8 +47,4 @@ class PermissionsDataTable extends DataTable
         ];
     }
 
-    protected function filename(): string
-    {
-        return 'Permissions_' . date('YmdHis');
-    }
 }

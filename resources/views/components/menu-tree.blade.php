@@ -31,7 +31,7 @@
         <li class="nav-item">
             <a href="{{ $item->resolvedUrl() }}"
                 class="nav-link px-3 py-2 rounded d-flex align-items-center transition-all {{ $isActive ? 'text-white fw-medium' : 'text-white-50 hover-mini-item' }}"
-                style="font-size: 12.5px;">
+                style="font-size: 12.5px; {{ $isActive ? 'background-color: rgba(59, 130, 246, 0.15);' : '' }}">
                 @if ($item->icon)
                     <i class="nav-icon {{ $item->icon }} me-2-5 text-center" style="width: 16px; font-size: 13px; {{ $isActive ? 'color: #3b82f6;' : 'opacity: 0.7;' }}"></i>
                 @endif

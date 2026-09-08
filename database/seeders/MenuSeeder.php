@@ -50,6 +50,11 @@ class MenuSeeder extends Seeder
             ['icon' => 'fas fa-clipboard-list', 'route' => 'core.logs.index', 'order' => 6]
         );
 
+        Menu::updateOrCreate(
+            ['name' => 'App Settings', 'parent_id' => $settings->id],
+            ['icon' => 'fas fa-sliders-h', 'route' => 'core.settings.index', 'order' => 7]
+        );
+
         // Give Super Admin every menu permission that exists so far.
         $superAdmin = Role::where('name', 'Super Admin')->first();
         if ($superAdmin) {

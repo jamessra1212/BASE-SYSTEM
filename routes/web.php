@@ -4,10 +4,11 @@ use App\Core\Http\Controllers\LogController;
 use App\Core\Http\Controllers\MenuController;
 use App\Core\Http\Controllers\PermissionController;
 use App\Core\Http\Controllers\RoleController;
+use App\Core\Http\Controllers\SettingsController;
 use App\Core\Http\Controllers\UserAccessController;
+use App\Core\Http\Controllers\UserController;
 use App\Http\Controllers\BackEnd\LoginController;
 use App\Http\Controllers\BackEnd\MainController;
-use App\Core\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
     Route::get('/', function () {
@@ -102,6 +103,11 @@ use Illuminate\Support\Facades\Route;
         Route::middleware('perm:manage logs')->group(function () {
             Route::get('logs', [LogController::class, 'index'])->name('logs.index');
             Route::delete('logs', [LogController::class, 'clear'])->name('logs.clear')->middleware('perm:logs.clear');
+        });
+
+        Route::middleware('perm:manage settings')->group(function () {
+            Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
+            Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
         });
 
     });

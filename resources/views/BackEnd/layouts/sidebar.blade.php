@@ -3,9 +3,9 @@
 
     <!-- Brand Logo Space -->
     <div class="sidebar-brand border-bottom border-secondary-subtle" style="height: 56px; border-color: rgba(255,255,255,0.05) !important;">
-        <a href="#" class="brand-link text-decoration-none ">
-            <span class="brand-text fw-bold text-white tracking-wider" style="font-size: 13px; letter-spacing: 1.5px; opacity: 0.9;">SRA PORTAL</span>
-        </a>
+            <span class="brand-text fw-bold text-white tracking-wider" style="font-size: 13px; letter-spacing: 1.5px; opacity: 0.9;">
+                {{ setting('app_name', 'PORTAL') }}
+            </span>
     </div>
 
     <!-- Navigation Sidebar Wrapper -->

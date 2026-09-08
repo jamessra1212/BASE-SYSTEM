@@ -13,7 +13,7 @@ use Spatie\Permission\Models\Permission;
 class PermissionController extends Controller
 {
     protected array $protectedNames = [
-        'manage menus', 'manage roles', 'manage users', 'manage permissions', 'manage access',
+        'manage menus', 'manage roles', 'manage users', 'manage permissions', 'manage access', 'manage settings',
     ];
 
     public function index(PermissionsDataTable $dataTable)

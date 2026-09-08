@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>PORTAL</title>
+    <title>
+        {{ setting('app_name', config('app.name')) }}
+    </title>
     <link rel="shortcut icon" href="{{asset('assets/img/SRALOGO.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,7 +38,9 @@
                     <span class="text-muted ms-1">All rights reserved.</span>
                 </div>
                 <div class="text-muted">
-                    <span class="badge bg-light text-secondary border px-2 py-1">v1.0</span>
+                    <span class="badge bg-light text-secondary border px-2 py-1">
+                        {{ setting('app_version', '1.0') }}
+                    </span>
                 </div>
             </div>
         </footer>

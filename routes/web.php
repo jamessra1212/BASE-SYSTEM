@@ -2,6 +2,7 @@
 
 use App\Core\Http\Controllers\LogController;
 use App\Core\Http\Controllers\MenuController;
+use App\Core\Http\Controllers\NotificationController;
 use App\Core\Http\Controllers\PermissionController;
 use App\Core\Http\Controllers\RoleController;
 use App\Core\Http\Controllers\SettingsController;
@@ -109,5 +110,9 @@ use Illuminate\Support\Facades\Route;
             Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
             Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
         });
+
+        Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+        Route::post('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 
     });

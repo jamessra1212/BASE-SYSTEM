@@ -15,14 +15,19 @@
         <ul class="navbar-nav ms-auto align-items-center gap-2">
 
             <li class="nav-item d-none d-sm-inline-block">
-                <a class="nav-link text-secondary hover-bg rounded-circle d-flex align-items-center justify-content-center"
-                   data-bs-toggle="offcanvas"
-                   data-bs-target="#offcanvasRight"
-                   aria-controls="offcanvasRight"
-                   href="javascript:void(0)"
-                   role="button"
-                   style="width: 38px; height: 38px; transition: all 0.2s;">
+                <a class="nav-link position-relative text-secondary hover-bg rounded-circle d-flex align-items-center justify-content-center"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight"
+                aria-controls="offcanvasRight"
+                href="javascript:void(0)"
+                role="button"
+                style="width: 38px; height: 38px; transition: all 0.2s;">
                     <i class="fas fa-bell fs-5"></i>
+                    @php $unreadCount = auth()->check() ? auth()->user()->unreadNotifications->count() : 0; @endphp
+                    <span id="notif-badge" class="position-absolute top-0 end-0 badge rounded-pill bg-danger"
+                        style="font-size: 0.6rem; transform: translate(20%, -20%); {{ $unreadCount > 0 ? '' : 'display: none;' }}">
+                        {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                    </span>
                 </a>
             </li>
 
@@ -121,3 +126,138 @@
         </ul>
     </div>
 </nav>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header text-white" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+        <h5 class="offcanvas-title fw-bold" id="offcanvasRightLabel">Notifications</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body p-0">
+        @auth
+            @php $recentNotifications = auth()->user()->notifications()->latest()->take(8)->get(); @endphp
+
+            @if ($recentNotifications->isNotEmpty())
+                <div class="p-2 border-bottom d-flex justify-content-end">
+                    <button type="button" id="btn-mark-all-read" class="btn btn-sm btn-link text-decoration-none">
+                        Mark all as read
+                    </button>
+                </div>
+            @endif
+
+            <div class="list-group list-group-flush" id="notification-list">
+                @forelse ($recentNotifications as $notification)
+                    <a href="javascript:void(0)"
+                       class="list-group-item list-group-item-action notification-item d-flex gap-3 py-3 {{ $notification->read_at ? '' : 'bg-primary bg-opacity-10' }}"
+                       data-id="{{ $notification->id }}"
+                       data-url="{{ $notification->data['url'] ?? '' }}">
+                        <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width: 36px; height: 36px;">
+                            <i class="{{ $notification->data['icon'] ?? 'fas fa-bell' }}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold small text-dark">{{ $notification->data['title'] ?? 'Notification' }}</div>
+                            <div class="small text-muted">{{ $notification->data['message'] ?? '' }}</div>
+                            <div class="small text-muted mt-1" style="font-size: 0.7rem;">{{ $notification->created_at->diffForHumans() }}</div>
+                        </div>
+                    </a>
+                @empty
+                    <div class="p-4 text-center text-muted small">No notifications yet.</div>
+                @endforelse
+            </div>
+
+            <div class="p-2 border-top text-center">
+                <a href="{{ route('core.notifications.index') }}" class="small fw-semibold text-decoration-none">View All</a>
+            </div>
+        @endauth
+    </div>
+</div>
+
+@push('script')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.notification-item').forEach(function (item) {
+        item.addEventListener('click', function () {
+            const id = this.dataset.id;
+            const url = this.dataset.url;
+
+            fetch(`/core/notifications/${id}/read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                },
+            }).finally(function () {
+                if (url) window.location.href = url;
+            });
+        });
+    });
+
+    const markAllBtn = document.getElementById('btn-mark-all-read');
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', function () {
+            fetch('/core/notifications/read-all', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                },
+            }).then(function () {
+                window.location.reload();
+            });
+        });
+    }
+});
+
+@auth
+document.addEventListener('DOMContentLoaded', function () {
+    window.Echo.private('App.Models.User.{{ auth()->id() }}')
+        .notification((notification) => {
+            const badge = document.getElementById('notif-badge');
+            const currentCount = parseInt(badge.textContent) || 0;
+            const newCount = currentCount + 1;
+            badge.textContent = newCount > 9 ? '9+' : newCount;
+            badge.style.display = 'inline-block';
+
+            const list = document.getElementById('notification-list');
+            const emptyState = list.querySelector('.text-muted.text-center');
+            if (emptyState) emptyState.remove();
+
+            const item = document.createElement('a');
+            item.href = 'javascript:void(0)';
+            item.className = 'list-group-item list-group-item-action notification-item d-flex gap-3 py-3 bg-primary bg-opacity-10';
+            item.dataset.id = notification.id;
+            item.dataset.url = notification.url ?? '';
+            item.innerHTML = `
+                <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px;">
+                    <i class="${notification.icon ?? 'fas fa-bell'}"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-semibold small text-dark">${notification.title}</div>
+                    <div class="small text-muted">${notification.message}</div>
+                    <div class="small text-muted mt-1" style="font-size: 0.7rem;">Just now</div>
+                </div>
+            `;
+
+            item.addEventListener('click', function () {
+                fetch(`/core/notifications/${this.dataset.id}/read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                }).finally(() => {
+                    if (this.dataset.url) window.location.href = this.dataset.url;
+                });
+            });
+
+            list.prepend(item);
+
+            if (window.toastr) {
+                toastr.info(notification.message, notification.title);
+            }
+        });
+});
+@endauth
+</script>
+@endpush

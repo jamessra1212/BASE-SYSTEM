@@ -21,8 +21,6 @@ class Menu extends Model
 
     protected static function booted(): void
     {
-        // Auto-generate a unique permission slug + create the matching
-        // Spatie permission whenever a menu item is created.
         static::creating(function (Menu $menu) {
             if (empty($menu->permission_name)) {
                 $menu->permission_name = static::generateUniquePermissionName($menu->name);
@@ -63,7 +61,13 @@ class Menu extends Model
 
     public function overrides(): HasMany
     {
-        return $this->hasMany(\App\Core\Models\MenuUserOverride::class);
+        return $this->hasMany(MenuUserOverride::class);
+    }
+
+    /** Action-level permissions linked to this menu via Permission's menu_id. */
+    public function linkedPermissions(): HasMany
+    {
+        return $this->hasMany(Permission::class, 'menu_id')->orderBy('name');
     }
 
     public function scopeActive($query)
@@ -83,5 +87,21 @@ class Menu extends Model
         }
 
         return $this->url ?: '#';
+    }
+
+    /**
+     * Functional pages (ones with an actual route), grouped by their
+     * parent's name, each with its linked action permissions eager
+     * loaded — the shared data shape behind the card-grid layout used
+     * on both the Roles and User Access screens.
+     */
+    public static function leafMenusGroupedForCards()
+    {
+        $leafMenus = static::with(['parent', 'linkedPermissions'])
+            ->whereNotNull('route')
+            ->orderBy('order')
+            ->get();
+
+        return $leafMenus->groupBy(fn ($menu) => $menu->parent?->name ?? 'Main Menu');
     }
 }

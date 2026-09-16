@@ -69,11 +69,25 @@ class RoleController extends Controller
     public function updatePermissions(Request $request, Role $role)
     {
         $selectedMenuIds = collect($request->input('menu_ids', []))->map(fn ($id) => (int) $id);
-        $selectedMenuPermissionNames = Menu::whereIn('id', $selectedMenuIds)->pluck('permission_name');
+        $selectedMenus = Menu::with('linkedPermissions')->whereIn('id', $selectedMenuIds)->get();
+
+        $selectedMenuPermissionNames = $selectedMenus->pluck('permission_name');
+
+        // Folded into the View/Access toggle in the UI — restore them here
+        // so checking a menu still grants its "manage X" permission too.
+        $impliedManagePermissionNames = $selectedMenus
+            ->flatMap(fn ($menu) => $menu->linkedPermissions)
+            ->filter(fn ($p) => str_starts_with($p->name, 'manage '))
+            ->pluck('name');
 
         $selectedActionPermissionNames = collect($request->input('permission_names', []));
 
-        $role->syncPermissions($selectedMenuPermissionNames->merge($selectedActionPermissionNames)->unique());
+        $role->syncPermissions(
+            $selectedMenuPermissionNames
+                ->merge($impliedManagePermissionNames)
+                ->merge($selectedActionPermissionNames)
+                ->unique()
+        );
 
         activity()->causedBy(auth()->user())->performedOn($role)->log("updated permissions for role \"{$role->name}\"");
 

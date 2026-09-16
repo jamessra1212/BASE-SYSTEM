@@ -33,6 +33,8 @@ class UserAccessController extends Controller
 
             $groupedMenus = Menu::leafMenusGroupedForCards();
 
+            $rolePermissionNames = $selectedUser->getPermissionsViaRoles()->pluck('name');
+
             $unassignedGrouped = Permission::where('name', 'not like', 'menu.%')
                 ->whereNull('menu_id')
                 ->orderBy('group')->orderBy('name')
@@ -45,39 +47,60 @@ class UserAccessController extends Controller
 
         return view('admin.users.access', compact(
             'users', 'selectedUser', 'groupedMenus', 'unassignedGrouped',
-            'menuOverrides', 'permissionOverrides'
+            'menuOverrides', 'permissionOverrides', 'rolePermissionNames'
         ));
     }
 
     /**
-     * Per item: the "override" checkbox decides whether an override row
-     * exists at all; the "state" checkbox (only meaningful when override
-     * is on) decides allow vs deny. Override off -> delete any existing
-     * row, back to clean inheritance from the role.
+     * Per menu: the "override" toggle decides whether an override row
+     * exists at all; the "state" toggle (only meaningful when override is
+     * on) decides allow vs deny. A menu's linked "manage X" permission is
+     * mirrored to match automatically, same merge as the Roles screen —
+     * it never gets its own override row in the UI. Any other linked
+     * permission (e.g. a *.destroy) stays fully independent.
      */
     public function update(Request $request, User $user)
     {
         $groupedMenus = Menu::leafMenusGroupedForCards();
-        $allMenuIds = $groupedMenus->flatten()->pluck('id');
+        $allMenus = $groupedMenus->flatten();
 
-        $allPermissionIds = Permission::where('name', 'not like', 'menu.%')->pluck('id');
-
-        foreach ($allMenuIds as $menuId) {
-            $overrideOn = $request->boolean("menu_override.$menuId");
+        foreach ($allMenus as $menu) {
+            $overrideOn = $request->boolean("menu_override.{$menu->id}");
+            $managePermission = $menu->linkedPermissions->first(fn ($p) => str_starts_with($p->name, 'manage '));
 
             if (! $overrideOn) {
-                MenuUserOverride::where('user_id', $user->id)->where('menu_id', $menuId)->delete();
+                MenuUserOverride::where('user_id', $user->id)->where('menu_id', $menu->id)->delete();
+
+                if ($managePermission) {
+                    PermissionUserOverride::where('user_id', $user->id)->where('permission_id', $managePermission->id)->delete();
+                }
+
                 continue;
             }
 
-            $state = $request->boolean("menu_state.$menuId");
+            $state = $request->boolean("menu_state.{$menu->id}");
+
             MenuUserOverride::updateOrCreate(
-                ['user_id' => $user->id, 'menu_id' => $menuId],
+                ['user_id' => $user->id, 'menu_id' => $menu->id],
                 ['access' => $state ? 'allow' : 'deny']
             );
+
+            if ($managePermission) {
+                PermissionUserOverride::updateOrCreate(
+                    ['user_id' => $user->id, 'permission_id' => $managePermission->id],
+                    ['access' => $state ? 'allow' : 'deny']
+                );
+            }
         }
 
-        foreach ($allPermissionIds as $permissionId) {
+        // Any other linked permission (e.g. *.destroy) plus unassigned ones
+        // stay independently toggleable — same pattern as before, just now
+        // excluding the "manage X" ones already handled above.
+        $otherPermissionIds = Permission::where('name', 'not like', 'menu.%')
+            ->where('name', 'not like', 'manage %')
+            ->pluck('id');
+
+        foreach ($otherPermissionIds as $permissionId) {
             $overrideOn = $request->boolean("perm_override.$permissionId");
 
             if (! $overrideOn) {

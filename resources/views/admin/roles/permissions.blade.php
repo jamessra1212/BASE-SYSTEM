@@ -18,14 +18,24 @@
 
         <div class="row g-3 mb-2">
             @foreach ($menusInSection as $menu)
+                @php
+                    // Any "manage X" permission linked to this menu is folded into
+                    // the View/Access toggle itself — granting one always grants both,
+                    // so the sidebar and the actual page access never drift apart.
+                    $otherLinkedPermissions = $menu->linkedPermissions->reject(
+                        fn ($p) => str_starts_with($p->name, 'manage ')
+                    );
+                @endphp
                 <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-header bg-light fw-semibold small">{{ $menu->name }}</div>
-                        <div class="card-body p-2" style="max-height: 240px; overflow-y: auto;">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-light fw-semibold small" style="border-radius: 10px 10px 0 0;">
+                            {{ $menu->name }}
+                        </div>
+                        <div class="card-body p-0" style="max-height: 240px; overflow-y: auto;">
                             <x-role-permission-chip name="menu_ids" :id="$menu->id" :value="$menu->id"
                                 label="View / Access" :checked="$rolePermissionNames->contains($menu->permission_name)" />
 
-                            @foreach ($menu->linkedPermissions as $permission)
+                            @foreach ($otherLinkedPermissions as $permission)
                                 <x-role-permission-chip name="permission_names" :id="$permission->id" :value="$permission->name"
                                     :label="$permission->name" :checked="$rolePermissionNames->contains($permission->name)" />
                             @endforeach
@@ -45,9 +55,11 @@
         <div class="row g-3 mb-2">
             @foreach ($unassignedGrouped as $groupName => $permissionsInGroup)
                 <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-header bg-light fw-semibold small">{{ $groupName }}</div>
-                        <div class="card-body p-2" style="max-height: 240px; overflow-y: auto;">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-light fw-semibold small" style="border-radius: 10px 10px 0 0;">
+                            {{ $groupName }}
+                        </div>
+                        <div class="card-body p-0" style="max-height: 240px; overflow-y: auto;">
                             @foreach ($permissionsInGroup as $permission)
                                 <x-role-permission-chip name="permission_names" :id="$permission->id" :value="$permission->name"
                                     :label="$permission->name" :checked="$rolePermissionNames->contains($permission->name)" />

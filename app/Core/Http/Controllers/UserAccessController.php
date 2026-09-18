@@ -15,6 +15,7 @@ class UserAccessController extends Controller
     public function index(Request $request)
     {
         $users = User::query()
+            ->with('roles')
             ->when($request->q, fn ($q) => $q->where('fname', 'like', "%{$request->q}%")
                 ->orWhere('lname', 'like', "%{$request->q}%")
                 ->orWhere('email', 'like', "%{$request->q}%"))
@@ -27,6 +28,7 @@ class UserAccessController extends Controller
         $unassignedGrouped = collect();
         $menuOverrides = collect();
         $permissionOverrides = collect();
+        $rolePermissionNames = collect();
 
         if ($request->filled('user')) {
             $selectedUser = User::findOrFail($request->user);

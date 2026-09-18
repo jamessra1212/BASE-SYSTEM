@@ -24,7 +24,7 @@
                             class="list-group-item list-group-item-action py-2 {{ $selectedUser?->id === $user->id ? 'active' : '' }}">
                             <div class="small fw-semibold">{{ $user->fullname }}</div>
                             <div class="small {{ $selectedUser?->id === $user->id ? '' : 'text-muted' }}"
-                                style="font-size: 0.75rem;">{{ $user->email }}</div>
+                                style="font-size: 0.75rem;">{{ $user->roles->pluck('name')->join(', ') ?: '— no role —' }}</div>
                         </a>
                     @empty
                         <div class="list-group-item text-muted small">No users found.</div>
@@ -72,9 +72,10 @@
                             @endphp
                             <div class="col-md-4">
                                 <div class="card h-100 border-0 shadow-sm">
-                                    <div class="card-header bg-light fw-semibold small" style="border-radius: 10px 10px 0 0;">
+                                    <div class="card-header bg-light fw-semibold small d-flex justify-content-between align-items-center" style="border-radius: 0px 0px 0 0;">
                                         {{ $menu->name }}
-                                    </div>
+                                        <span class="text-muted text-uppercase ms-auto" style="font-size: 0.62rem; letter-spacing: 0.5px;">Override</span>
+                                    </div>                             
                                     <div class="card-body p-0" style="max-height: 240px; overflow-y: auto;">
                                         <x-permission-chip stateField="menu_state" overrideField="menu_override"
                                             :id="$menu->id" label="View / Access"

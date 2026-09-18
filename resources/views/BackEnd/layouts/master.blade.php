@@ -15,7 +15,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
-<body class="layout-fixed sidebar-expand-lg bg-light" style="font-family: 'Inter', sans-serif;">
+<body class="layout-fixed sidebar-expand-lg sidebar-mini bg-light" style="font-family: 'Inter', sans-serif;">
     <div class="app-wrapper">
 
         @include('BackEnd.layouts.navbar')

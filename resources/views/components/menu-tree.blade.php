@@ -1,7 +1,7 @@
 {{-- Usage: <x-menu-tree :items="$menuTree" /> --}}
 {{-- Renders <li> elements only — call this directly inside your existing
      <ul class="nav sidebar-menu ..." data-lte-toggle="treeview">, no extra wrapper needed. --}}
-@props(['items'])
+{{-- @props(['items'])
 
 @foreach ($items as $item)
     @php
@@ -38,5 +38,88 @@
                 <span>{{ $item->name }}</span>
             </a>
         </li>
+    @endif
+@endforeach --}}
+
+{{-- Usage: <x-menu-tree :items="$menuTree" /> --}}
+{{-- Renders <li> elements only. --}}
+@props(['items'])
+
+@foreach ($items as $item)
+    @php
+        $hasChildren = $item->children->isNotEmpty();
+
+        $isActive = $item->route
+            && request()->routeIs($item->route);
+
+        $childIsActive = $hasChildren && $item->children->contains(
+            fn ($child) =>
+                ($child->route && request()->routeIs($child->route))
+                || (
+                    $child->children->isNotEmpty()
+                    && $child->children->contains(
+                        fn ($grandchild) =>
+                            $grandchild->route
+                            && request()->routeIs($grandchild->route)
+                    )
+                )
+        );
+
+        $isOpen = $childIsActive;
+    @endphp
+
+    @if ($hasChildren)
+
+        {{-- Parent menu --}}
+        <li class="nav-item {{ $isOpen ? 'menu-open' : '' }}">
+
+            <a href="#"
+                class="nav-link {{ $isOpen ? 'active' : '' }}"
+                aria-expanded="{{ $isOpen ? 'true' : 'false' }}">
+
+                @if ($item->icon)
+                    <i class="nav-icon {{ $item->icon }}"></i>
+                @else
+                    <i class="nav-icon fas fa-folder"></i>
+                @endif
+
+                <p>
+                    {{ $item->name }}
+                    <i class="nav-arrow fas fa-angle-right"></i>
+                </p>
+
+            </a>
+
+            <ul class="nav nav-treeview"
+                style="{{ $isOpen ? 'display: block;' : '' }}">
+
+                <x-menu-tree :items="$item->children" />
+
+            </ul>
+
+        </li>
+
+    @else
+
+        {{-- Normal menu item --}}
+        <li class="nav-item">
+
+            <a href="{{ $item->resolvedUrl() }}"
+                class="nav-link {{ $isActive ? 'active' : '' }}">
+
+                @if ($item->icon)
+                    <i class="nav-icon {{ $item->icon }}"></i>
+                @else
+                    <i class="nav-icon fas fa-circle"></i>
+                @endif
+
+                <p>
+                    {{ $item->name }}
+                </p>
+
+            </a>
+
+        </li>
+
     @endif
 @endforeach

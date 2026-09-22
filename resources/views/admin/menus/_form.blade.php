@@ -1,9 +1,7 @@
-@php
-    $isEdit = $menu->exists;
-@endphp
+@php $isEdit = $menu->exists; @endphp
 
 <div class="modal fade" id="MENU_ENTRY_MODAL" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog {{ $isEdit ? '' : 'modal-lg' }}">
         <form id="form_menu_entry" class="modal-content">
             @csrf
             @if ($isEdit) @method('PUT') @endif
@@ -43,7 +41,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Named route (optional)</label>
-                    <input type="text" name="route" class="form-control" value="{{ $menu->route }}" placeholder="app.main.home">
+                    <input type="text" name="route" class="form-control" value="{{ $menu->route }}" placeholder="core.menus.index">
                     <div class="invalid-feedback"></div>
                 </div>
 
@@ -59,11 +57,53 @@
                     <div class="invalid-feedback"></div>
                 </div>
 
-                <div class="form-check form-switch">
+                <div class="form-check form-switch mb-3">
                     <input class="form-check-input" type="checkbox" name="is_active" value="1"
                         {{ $menu->exists ? ($menu->is_active ? 'checked' : '') : 'checked' }}>
                     <label class="form-check-label">Active</label>
                 </div>
+
+                @unless ($isEdit)
+                    <hr>
+                    <label class="form-label fw-semibold">Quick-add common actions (optional)</label>
+                    <p class="text-muted small">
+                        Check any actions this page needs. Each one becomes either its own sidebar link
+                        (with its own permission, automatically) or a plain linked permission with no
+                        nav appearance — your choice, per action.
+                    </p>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"></th>
+                                    <th>Action</th>
+                                    <th style="width: 140px;">Show in sidebar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (['Create', 'Store', 'Edit', 'Update', 'Show', 'Destroy'] as $action)
+                                    <tr>
+                                        <td>
+                                            <input class="form-check-input quick-action-include" type="checkbox"
+                                                name="quick_actions[]" value="{{ $action }}" id="qa-{{ $action }}">
+                                        </td>
+                                        <td>
+                                            <label for="qa-{{ $action }}" class="mb-0">{{ $action }}</label>
+                                        </td>
+                                        <td>
+                                            <div class="form-check form-switch mb-0">
+                                                <input class="form-check-input quick-action-nav" type="checkbox"
+                                                    name="quick_actions_nav[]" value="{{ $action }}"
+                                                    id="qa-nav-{{ $action }}" disabled>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endunless
             </div>
 
             <div class="modal-footer">
@@ -79,3 +119,15 @@
         </form>
     </div>
 </div>
+
+@unless ($isEdit)
+    <script>
+        document.querySelectorAll('.quick-action-include').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                const navToggle = document.getElementById('qa-nav-' + this.value);
+                navToggle.disabled = !this.checked;
+                if (!this.checked) navToggle.checked = false;
+            });
+        });
+    </script>
+@endunless

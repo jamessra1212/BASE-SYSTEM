@@ -10,9 +10,8 @@ class MenuService
 {
     /**
      * Build the full menu tree, filtered to only what this user may see.
-     * Precedence: per-user override (allow/deny) beats the role-based
-     * permission. A parent item stays visible if it (or any descendant)
-     * is accessible, so group headers don't show up empty.
+     * is_nav = false items never enter the tree at all — they exist as
+     * permission gates only (e.g. Destroy), not as sidebar links.
      */
     public function getMenuTreeForUser(User $user): Collection
     {
@@ -20,7 +19,7 @@ class MenuService
             ->get(['menu_id', 'access'])
             ->keyBy('menu_id');
 
-        $all = Menu::query()->active()->orderBy('order')->get();
+        $all = Menu::query()->active()->where('is_nav', true)->orderBy('order')->get();
 
         $tree = $this->buildTree($all, null);
 

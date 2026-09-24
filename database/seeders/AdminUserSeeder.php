@@ -15,7 +15,6 @@ class AdminUserSeeder extends Seeder
             [
                 'fname' => 'Super',
                 'lname' => 'Admin',
-                'fullname' => 'Super Admin',
                 'username' => 'superadmin',
                 'password' => bcrypt('password'),
                 'categories' => 1,

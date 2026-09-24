@@ -11,12 +11,13 @@ use Spatie\Permission\Models\Permission;
 class Menu extends Model
 {
     protected $fillable = [
-        'parent_id', 'name', 'icon', 'route', 'url',
-        'permission_name', 'order', 'is_active',
+        'parent_id', 'name', 'nav_name', 'icon', 'route', 'url',
+        'permission_name', 'order', 'is_active', 'is_nav',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_nav' => 'boolean',
     ];
 
     protected static function booted(): void
@@ -64,10 +65,9 @@ class Menu extends Model
         return $this->hasMany(MenuUserOverride::class);
     }
 
-    /** Action-level permissions linked to this menu via Permission's menu_id. */
     public function linkedPermissions(): HasMany
     {
-        return $this->hasMany(Permission::class, 'menu_id')->orderBy('name');
+        return $this->hasMany(Permission::class, 'menu_id');
     }
 
     public function scopeActive($query)

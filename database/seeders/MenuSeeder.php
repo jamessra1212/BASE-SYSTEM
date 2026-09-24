@@ -36,11 +36,6 @@ class MenuSeeder extends Seeder
         );
 
         Menu::updateOrCreate(
-            ['name' => 'Permissions', 'parent_id' => $settings->id],
-            ['icon' => 'fas fa-key', 'route' => 'core.permissions.index', 'order' => 4]
-        );
-
-        Menu::updateOrCreate(
             ['name' => 'Roles & Permissions', 'parent_id' => $settings->id],
             ['icon' => 'fas fa-user-shield', 'route' => 'core.roles.index', 'order' => 5]
         );

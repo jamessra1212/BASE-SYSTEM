@@ -3,7 +3,6 @@
 use App\Core\Http\Controllers\LogController;
 use App\Core\Http\Controllers\MenuController;
 use App\Core\Http\Controllers\NotificationController;
-use App\Core\Http\Controllers\PermissionController;
 use App\Core\Http\Controllers\RoleController;
 use App\Core\Http\Controllers\SettingsController;
 use App\Core\Http\Controllers\UserAccessController;
@@ -62,7 +61,7 @@ use Illuminate\Support\Facades\Route;
             Route::post('users/upass', [UserController::class, 'user_upass'])->name('users.upass');
             Route::post('users/ustat', [UserController::class, 'user_ustat'])->name('users.ustat');
             
-            Route::delete('users/destroy', [UserController::class, 'user_destroy'])->name('users.destroy')->middleware('perm:user.destroy');
+            Route::delete('users/destroy', [UserController::class, 'user_destroy'])->name('users.destroy')->middleware('perm:menu.manage-users-destroy');
         });
             
         Route::middleware('perm:manage access')->group(function () {
@@ -76,18 +75,9 @@ use Illuminate\Support\Facades\Route;
             Route::get('menus/entry', [MenuController::class, 'entry'])->name('menus.entry');
             Route::post('menus', [MenuController::class, 'store'])->name('menus.store');
             Route::put('menus/{menu}', [MenuController::class, 'update'])->name('menus.update');
+            Route::get('menus/{menu}/submenus', [MenuController::class, 'submenus'])->name('menus.submenus');
             
-            Route::delete('menus/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy')->middleware('perm:menus.destroy');
-        });
-
-        Route::middleware('perm:manage permissions')->group(function () {
-            Route::get('permissions', [PermissionController::class, 'index'])->name('permissions.index');
-            Route::get('permissions/data', [PermissionController::class, 'data'])->name('permissions.data');
-            Route::get('permissions/entry', [PermissionController::class, 'entry'])->name('permissions.entry');
-            Route::post('permissions', [PermissionController::class, 'store'])->name('permissions.store');
-            Route::put('permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
-
-            Route::delete('permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy')->middleware('perm:permissions.destroy');
+            Route::delete('menus/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy')->middleware('perm:menu.menu-management-destroy');
         });
 
         Route::middleware('perm:manage roles')->group(function () {
@@ -98,12 +88,12 @@ use Illuminate\Support\Facades\Route;
             Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
             Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
 
-            Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('perm:roles.destroy');
+            Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('perm:menu.roles-permissions-destroy');
         });
 
         Route::middleware('perm:manage logs')->group(function () {
             Route::get('logs', [LogController::class, 'index'])->name('logs.index');
-            Route::delete('logs', [LogController::class, 'clear'])->name('logs.clear')->middleware('perm:logs.clear');
+            Route::delete('logs', [LogController::class, 'clear'])->name('logs.clear')->middleware('perm:menu.activity-logs-clear');
         });
 
         Route::middleware('perm:manage settings')->group(function () {

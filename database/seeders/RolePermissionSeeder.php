@@ -14,7 +14,6 @@ class RolePermissionSeeder extends Seeder
             'manage roles',
             'manage menus',
             'manage users',
-            'manage permissions',
             'manage access',
             'manage settings',
         ];

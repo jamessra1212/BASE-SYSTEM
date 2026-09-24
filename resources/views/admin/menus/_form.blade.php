@@ -21,6 +21,13 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Nav Name (optional)</label>
+                    <input type="text" name="nav_name" class="form-control" value="{{ $menu->nav_name }}" placeholder="Leave blank to just use the Name above">
+                    <div class="form-text">What actually shows in the sidebar, if you want something shorter/friendlier than the Name.</div>
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Parent Menu</label>
                     <select name="parent_id" class="form-select">
                         <option value="">— Top level —</option>
@@ -57,19 +64,38 @@
                     <div class="invalid-feedback"></div>
                 </div>
 
-                <div class="form-check form-switch mb-3">
+                <div class="form-check form-switch mb-2">
                     <input class="form-check-input" type="checkbox" name="is_active" value="1"
                         {{ $menu->exists ? ($menu->is_active ? 'checked' : '') : 'checked' }}>
                     <label class="form-check-label">Active</label>
                 </div>
 
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="is_nav" value="1"
+                        {{ $menu->exists ? ($menu->is_nav ? 'checked' : '') : 'checked' }}>
+                    <label class="form-check-label">Show in sidebar</label>
+                    <div class="form-text">Turn off for a permission-only entry (e.g. Delete) that shouldn't appear as its own nav link.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Base Permission Name (optional)</label>
+                    <input type="text" name="base_permission_name" class="form-control"
+                        value="{{ $basePermissionName ?? '' }}" placeholder="e.g. manage menus">
+                    <div class="form-text">
+                        The main functional gate for this whole section (view + create + edit). Leave blank
+                        if this menu doesn't need one. Changing this relinks it — it never renames an
+                        existing permission, since routes reference exact names.
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
+
                 @unless ($isEdit)
                     <hr>
-                    <label class="form-label fw-semibold">Quick-add common actions (optional)</label>
+                    <label class="form-label fw-semibold">Quick-add common submenus (optional)</label>
                     <p class="text-muted small">
-                        Check any actions this page needs. Each one becomes either its own sidebar link
-                        (with its own permission, automatically) or a plain linked permission with no
-                        nav appearance — your choice, per action.
+                        Check any actions this page needs. Each becomes its own submenu with its own
+                        permission automatically — "Show in sidebar" just decides whether it also
+                        appears as its own nav link.
                     </p>
 
                     <div class="table-responsive">

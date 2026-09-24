@@ -10,14 +10,16 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')->nullable()->constrained('menus')->nullOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained('menus')->cascadeOnDelete();
             $table->string('name');
-            $table->string('icon')->nullable(); // e.g. bootstrap-icons class, "bi bi-speedometer2"
-            $table->string('route')->nullable();  // named route, e.g. "admin.users.index"
-            $table->string('url')->nullable();    // fallback raw url if no named route
-            $table->string('permission_name')->unique(); // e.g. "menu.dashboard"
+            $table->string('nav_name')->nullable();
+            $table->string('icon')->nullable();
+            $table->string('route')->nullable();
+            $table->string('url')->nullable();
+            $table->string('permission_name')->unique();
             $table->unsignedInteger('order')->default(0);
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_nav')->default(true);
             $table->timestamps();
 
             $table->index(['parent_id', 'order']);

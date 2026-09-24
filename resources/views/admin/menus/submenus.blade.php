@@ -3,27 +3,29 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <div class="card dt-modern-card border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+                <h1 class="h4 mb-0">{{ $menu->name }} <span class="text-muted fw-normal">| Submenus</span></h1>
+            </div>
+            <a href="{{ route('core.menus.index') }}" class="btn btn-outline-secondary btn-sm">Back to Menus</a>
+        </div>
 
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        <div class="card dt-modern-card border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
             <div class="card-header bg-white pt-4 pb-3 px-4 d-flex align-items-center justify-content-between w-100"
                 style="border-bottom: 1px solid #f1f5f9;">
-
                 <h5 class="m-0 fw-bold text-dark d-flex align-items-center" style="font-size: 1.05rem;">
-                    <i class="fas fa-key text-muted me-2"></i>Permissions
+                    <i class="fas fa-list text-muted me-2"></i>Submenus
                 </h5>
-
-                <button id="btn_add_permission" class="btn btn-sm px-3 ms-auto text-white fw-medium shadow-sm"
+                <button id="btn_add_submenu" class="btn btn-sm px-3 ms-auto text-white fw-medium shadow-sm"
                         style="background-color: #10b981; border: 1px solid #10b981; font-size: 0.85rem; padding: 0.45rem 1.1rem; border-radius: 6px; white-space: nowrap;">
-                    <i class="fas fa-plus me-1"></i>New Permission
+                    <i class="fas fa-plus me-1"></i>Add Submenu
                 </button>
             </div>
-
             <div class="card-body px-4 pb-4 pt-3 overflow-hidden">
-                <p class="text-muted small">
-                    These are action-level permissions (like "report.print") for gating specific buttons or
-                    features — not whole pages. Page-level access is managed under Menu Management instead.
-                    Assign these to roles from Roles &amp; Permissions.
-                </p>
                 <div class="table-responsive">
                     {{ $dataTable->table(['class' => 'table align-middle border-0 w-100 mb-0']) }}
                 </div>
@@ -42,18 +44,20 @@
         document.addEventListener('DOMContentLoaded', function () {
             let isModalOpen = false;
 
-            function loadPermissionFormModal(permissionId = null) {
+            function loadMenuFormModal(menuId = null) {
                 if (isModalOpen) return;
                 isModalOpen = true;
 
+                const data = menuId ? { id: menuId } : { parent_id: '{{ $menu->id }}' };
+
                 $.ajax({
-                    url: '{{ route("core.permissions.entry") }}',
+                    url: '{{ route("core.menus.entry") }}',
                     type: 'GET',
-                    data: permissionId ? { id: permissionId } : {},
+                    data: data,
                     success: function (data) {
                         $('#modal-body').html(data);
 
-                        const modalElement = document.getElementById('PERMISSION_ENTRY_MODAL');
+                        const modalElement = document.getElementById('MENU_ENTRY_MODAL');
                         if (modalElement) {
                             const modalInstance = new bootstrap.Modal(modalElement);
                             modalInstance.show();
@@ -78,21 +82,21 @@
                 });
             }
 
-            $('#btn_add_permission').on('click', function (e) {
+            $('#btn_add_submenu').on('click', function (e) {
                 e.preventDefault();
-                loadPermissionFormModal();
+                loadMenuFormModal();
             });
 
-            $(document).on('click', '.btn-edit-permission', function (e) {
+            $(document).on('click', '.btn-edit-menu', function (e) {
                 e.preventDefault();
-                loadPermissionFormModal($(this).data('id'));
+                loadMenuFormModal($(this).data('id'));
             });
 
-            $(document).off('submit', '#form_permission_entry').on('submit', '#form_permission_entry', function (e) {
+            $(document).off('submit', '#form_menu_entry').on('submit', '#form_menu_entry', function (e) {
                 e.preventDefault();
 
                 const form = $(this);
-                const saveBtn = $('#btn_save_permission');
+                const saveBtn = $('#btn_save_menu');
                 const originalBtnHtml = saveBtn.html();
                 const errorSummary = $('#modal_error_summary');
                 const actionUrl = form.find('[name="_action_url"]').val();
@@ -105,7 +109,7 @@
 
                 $.ajax({
                     url: actionUrl,
-                    type: 'POST', // Laravel reads @method('PUT') spoof field for edits
+                    type: 'POST',
                     data: form.serialize(),
                     success: function (response) {
                         saveBtn.prop('disabled', false).html(originalBtnHtml);
@@ -113,23 +117,21 @@
                         if (response.status === 'success') {
                             toastr.success(response.message, 'Success');
 
-                            const modalEl = document.getElementById('PERMISSION_ENTRY_MODAL');
+                            const modalEl = document.getElementById('MENU_ENTRY_MODAL');
                             if (modalEl) {
                                 const instance = bootstrap.Modal.getInstance(modalEl);
                                 if (instance) instance.hide();
                             }
 
-                            if (window.LaravelDataTables && window.LaravelDataTables['tblPermissions']) {
-                                window.LaravelDataTables['tblPermissions'].ajax.reload(null, false);
+                            if (window.LaravelDataTables && window.LaravelDataTables['tblSubmenus']) {
+                                window.LaravelDataTables['tblSubmenus'].ajax.reload(null, false);
                             }
-                        } else {
-                            toastr.error(response.message, 'Cannot Save');
                         }
                     },
                     error: function (xhr) {
                         saveBtn.prop('disabled', false).html(originalBtnHtml);
 
-                        if (xhr.status === 422 && xhr.responseJSON.errors) {
+                        if (xhr.status === 422) {
                             let errors = xhr.responseJSON.errors;
                             toastr.error('Please check the fields below.', 'Validation Error');
                             errorSummary.removeClass('d-none');
@@ -144,19 +146,18 @@
                         } else {
                             let msg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Something went wrong.';
                             toastr.error(msg, 'System Error');
-                            errorSummary.removeClass('d-none').text(msg);
                         }
                     }
                 });
             });
 
-            $(document).on('click', '.btn-delete-permission', function (e) {
+            $(document).on('click', '.btn-delete-menu', function (e) {
                 e.preventDefault();
-                const permissionId = $(this).data('id');
+                const menuId = $(this).data('id');
 
                 Swal.fire({
-                    title: 'Delete this permission?',
-                    text: 'Any role currently granted it will lose it.',
+                    title: 'Delete this submenu?',
+                    text: 'Any child items under it will become top-level items.',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444',
@@ -167,18 +168,16 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `/core/permissions/${permissionId}`,
+                            url: `/core/menus/${menuId}`,
                             type: 'DELETE',
                             data: { _token: '{{ csrf_token() }}' },
                             success: function (response) {
                                 if (response.status === 'success') {
                                     toastr.success(response.message, 'Deleted');
 
-                                    if (window.LaravelDataTables && window.LaravelDataTables['tblPermissions']) {
-                                        window.LaravelDataTables['tblPermissions'].ajax.reload(null, false);
+                                    if (window.LaravelDataTables && window.LaravelDataTables['tblSubmenus']) {
+                                        window.LaravelDataTables['tblSubmenus'].ajax.reload(null, false);
                                     }
-                                } else {
-                                    toastr.error(response.message, 'Cannot Delete');
                                 }
                             },
                             error: function (xhr) {

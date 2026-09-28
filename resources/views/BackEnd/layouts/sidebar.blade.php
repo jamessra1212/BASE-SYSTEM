@@ -26,7 +26,7 @@
 
 
     {{-- Sidebar Wrapper --}}
-    <div class="sidebar-wrapper">
+    <div class="sidebar-wrapper" data-overlayscrollbars-viewport="scrollbarHidden overflowXScroll overflowYScroll">
 
         <nav class="mt-2" aria-label="Main navigation">
 
@@ -35,6 +35,7 @@
                 data-lte-toggle="treeview"
                 data-accordion="false"
                 id="navigation"
+                tabindex="-1"
             >
 
                 @php

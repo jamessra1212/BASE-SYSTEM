@@ -78,7 +78,7 @@
                                     </div>                             
                                     <div class="card-body p-0" style="max-height: 240px; overflow-y: auto;">
                                         <x-permission-chip stateField="menu_state" overrideField="menu_override"
-                                            :id="$menu->id" label="View / Access"
+                                            :id="$menu->id" :label="$menu->nav_name ?: $menu->name"
                                             :checked="$menuOverrideValue === 'allow'"
                                             :overridden="$menuOverrideValue !== null"
                                             :roleDefault="$rolePermissionNames->contains($menu->permission_name)" />

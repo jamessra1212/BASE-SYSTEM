@@ -39,9 +39,13 @@ class MenusDataTable extends DataTable
             ->addColumn('action', fn (Menu $menu) => view('admin.menus._actions', compact('menu'))->render());
 
         if ($this->filterParentId === null) {
-            $table->addColumn('submenus_preview', fn (Menu $menu) => $menu->children->isEmpty()
-                ? '<span class="text-muted">—</span>'
-                : $menu->children->map(fn ($child) => '• ' . e($child->name))->implode('<br>'));
+            $table->addColumn('submenus_preview', function (Menu $menu) {
+                $descendants = $menu->allDescendantsFlat();
+
+                return $descendants->isEmpty()
+                    ? '<span class="text-muted">—</span>'
+                    : $descendants->map(fn ($name) => '• ' . e($name))->implode('<br>');
+            });
         }
 
         return $table
@@ -69,7 +73,9 @@ class MenusDataTable extends DataTable
 
     protected function defaultOrderColumn(): int
     {
-        return $this->filterParentId !== null ? 4 : 5;
+        // 'order' sits at a different index depending on which extra
+        // columns are included (main screen has 1 more than submenus).
+        return $this->filterParentId !== null ? 5 : 6;
     }
 
     protected function getColumns(): array
@@ -78,6 +84,7 @@ class MenusDataTable extends DataTable
             Column::make('name'),
             Column::make('nav_name')->title('Nav Name'),
             Column::make('route'),
+            Column::make('permission_name')->title('Permission'),
         ];
 
         if ($this->filterParentId === null) {

@@ -13,28 +13,24 @@
 
     @if ($hasChildren)
         <li class="nav-item {{ $childIsActive ? 'menu-open' : '' }}">
-            <a href="#" class="nav-link px-3 py-2 rounded d-flex align-items-center justify-content-between transition-all text-white-50 hover-mini-item" style="font-size: 12.5px;">
-                <span class="d-flex align-items-center">
-                    @if ($item->icon)
-                        <i class="nav-icon {{ $item->icon }} me-2-5 text-center" style="width: 16px; font-size: 13px; opacity: 0.7;"></i>
-                    @endif
-                    <span>{{ $displayName }}</span>
-                </span>
-                <i class="fas fa-angle-left" style="font-size: 10px; opacity: 0.5;"></i>
+            <a href="#" class="nav-link" title="{{ $displayName }}">
+                <i class="nav-icon {{ $item->icon ?: 'far fa-circle' }}"></i>
+                <p>
+                    {{ $displayName }}
+                    <i class="nav-arrow fas fa-angle-right"></i>
+                </p>
             </a>
-            <ul class="nav-treeview">
+            <ul class="nav nav-treeview">
                 <x-menu-tree :items="$item->children" />
             </ul>
         </li>
     @else
         <li class="nav-item">
             <a href="{{ $item->resolvedUrl() }}"
-                class="nav-link px-3 py-2 rounded d-flex align-items-center transition-all {{ $isActive ? 'text-white fw-medium' : 'text-white-50 hover-mini-item' }}"
-                style="font-size: 12.5px; {{ $isActive ? 'background-color: rgba(59, 130, 246, 0.15);' : '' }}">
-                @if ($item->icon)
-                    <i class="nav-icon {{ $item->icon }} me-2-5 text-center" style="width: 16px; font-size: 13px; {{ $isActive ? 'color: #3b82f6;' : 'opacity: 0.7;' }}"></i>
-                @endif
-                <span>{{ $displayName }}</span>
+               class="nav-link {{ $isActive ? 'active' : '' }}"
+               title="{{ $displayName }}">
+                <i class="nav-icon {{ $item->icon ?: 'far fa-circle' }}"></i>
+                <p>{{ $displayName }}</p>
             </a>
         </li>
     @endif

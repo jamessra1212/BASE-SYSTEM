@@ -55,9 +55,41 @@ class Menu extends Model
         return $this->belongsTo(Menu::class, 'parent_id');
     }
 
+    /**
+     * Structure is capped at root -> menu -> submenu (2 real levels;
+     * a wrapping group like "Settings" doesn't count against this). A
+     * true submenu is always a leaf — it never gets its own "Submenus"
+     * button, so nesting can't go any deeper than that.
+     */
+    public function canHaveSubmenus(): bool
+    {
+        if (is_null($this->parent_id)) {
+            return true;
+        }
+
+        return is_null($this->parent?->parent_id);
+    }
+
     public function children(): HasMany
     {
         return $this->hasMany(Menu::class, 'parent_id')->orderBy('order');
+    }
+
+    /**
+     * Every descendant's name, flattened recursively (children,
+     * grandchildren, etc.) — used for the "Submenus" preview column so
+     * the whole subtree shows at a glance, not just direct children.
+     */
+    public function allDescendantsFlat(): \Illuminate\Support\Collection
+    {
+        $names = collect();
+
+        foreach ($this->children as $child) {
+            $names->push($child->name);
+            $names = $names->merge($child->allDescendantsFlat());
+        }
+
+        return $names;
     }
 
     public function overrides(): HasMany
@@ -93,7 +125,10 @@ class Menu extends Model
      * Functional pages (ones with an actual route), grouped by their
      * parent's name, each with its linked action permissions eager
      * loaded — the shared data shape behind the card-grid layout used
-     * on both the Roles and User Access screens.
+     * on both the Roles and User Access screens. Groups are sorted to
+     * match each parent's actual position in the sidebar (its own
+     * `order` value), not just whatever order the leaf items happen to
+     * appear in.
      */
     public static function leafMenusGroupedForCards()
     {
@@ -102,6 +137,10 @@ class Menu extends Model
             ->orderBy('order')
             ->get();
 
-        return $leafMenus->groupBy(fn ($menu) => $menu->parent?->name ?? 'Main Menu');
+        $grouped = $leafMenus->groupBy(fn ($menu) => $menu->parent?->name ?? 'Main Menu');
+
+        $topLevelOrders = static::whereNull('parent_id')->pluck('order', 'name');
+
+        return $grouped->sortBy(fn ($menusInGroup, $groupName) => $topLevelOrders[$groupName] ?? 0);
     }
 }

@@ -10,18 +10,18 @@
 
     {{-- Sidebar Brand --}}
     <div class="sidebar-brand">
-
-        <span
-            class="brand-text fw-bold text-white"
-            style="
-                font-size: 13px;
-                letter-spacing: 1.5px;
-                opacity: .9;
-            "
-        >
-            {{ setting('app_name', 'PORTAL') }}
-        </span>
-
+        {{-- <a href="{{ route('app.main.home') }}" class="brand-link"> --}}
+            <span
+                class="brand-text fw-bold text-white"
+                style="
+                    font-size: 13px;
+                    letter-spacing: 1.5px;
+                    opacity: .9;
+                "
+            >
+                {{ setting('app_name', 'PORTAL') }}
+            </span>
+        {{-- </a> --}}
     </div>
 
 

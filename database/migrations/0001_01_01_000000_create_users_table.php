@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('img_slug')->nullable();
+            $table->mediumText('avatar_data')->nullable(); // base64-encoded image bytes
+            $table->string('avatar_mime')->nullable();  // e.g. image/png, image/jpeg
 
             // Name fields
             $table->string('fname')->nullable();

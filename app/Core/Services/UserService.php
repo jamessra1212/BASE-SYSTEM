@@ -65,20 +65,17 @@ class UserService
             if ($request->hasFile('avatar')) {
                 $file = $request->file('avatar');
 
-                // Construct a clean, unique file name configuration string
-                $fileName = 'avatar_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $validated['avatar_data'] = base64_encode(file_get_contents($file->getRealPath()));
+                $validated['avatar_mime'] = $file->getMimeType();
+            }
 
-                // FIX: Specify the 'public' disk explicitly as the third argument
-                $file->storeAs('avatars', $fileName, 'public');
-
-                // Purge old files to save disk usage profiles context allocations
-                if ($userId && !empty($userInstance->img_slug) && $userInstance->img_slug !== 'avatar-default.png') {
-                    // FIX: Ensure the deletion explicitly targets the 'public' disk too
-                    Storage::disk('public')->delete('avatars/' . $userInstance->img_slug);
-                }
-
-                // Append the generated path to data payload field structure mapping properties
-                $validated['img_slug'] = $fileName;
+            // Persist the changes seamlessly
+            if ($userId) {
+                $userInstance->update($validated);
+                $message = 'System User record updates have been applied successfully.';
+            } else {
+                $userInstance = $this->user->create($validated);
+                $message = 'System User record has been processed and committed successfully.';
             }
 
             // Persist the changes seamlessly

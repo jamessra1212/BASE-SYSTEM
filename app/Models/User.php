@@ -75,5 +75,14 @@ class User extends Authenticatable
 
         return $this->can($permissionName);
     }
+
+    public function avatarUrl(): string
+    {
+        if ($this->avatar_data) {
+            return route('app.users.avatar', $this->id);
+        }
+
+        return route('app.users.avatar.default');
+    }
 }
 

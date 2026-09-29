@@ -7,6 +7,7 @@ use App\Core\Http\Controllers\RoleController;
 use App\Core\Http\Controllers\SettingsController;
 use App\Core\Http\Controllers\UserAccessController;
 use App\Core\Http\Controllers\UserController;
+use App\Core\Http\Controllers\AvatarController;
 use App\Http\Controllers\BackEnd\LoginController;
 use App\Http\Controllers\BackEnd\MainController;
 use Illuminate\Support\Facades\Route;
@@ -44,7 +45,11 @@ use Illuminate\Support\Facades\Route;
         Route::get('main/home', [MainController::class, 'main_home'])->name('main.home');
         Route::match(['get','post'],'main/profile', [MainController::class, 'main_profile'])->name('main.profile');
 
+        Route::get('users/{user}/avatar', [AvatarController::class, 'show'])->name('users.avatar');
+        Route::get('users/avatar/default', [AvatarController::class, 'default'])->name('users.avatar.default');
+
     });
+
 
     Route::prefix('core')
         ->as('core.')

@@ -33,7 +33,12 @@ class Menu extends Model
         });
 
         static::deleting(function (Menu $menu) {
-            Permission::where('name', $menu->permission_name)->delete();
+            // Delete children through Eloquent (not just the DB cascade) so
+            // each one's own permission is cleaned up by this same hook
+            $menu->children()->get()->each->delete();
+
+            // Model-level delete so Spatie's permission cache is flushed too
+            Permission::where('name', $menu->permission_name)->get()->each->delete();
         });
     }
 

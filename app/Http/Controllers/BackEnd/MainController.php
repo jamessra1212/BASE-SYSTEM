@@ -5,10 +5,7 @@ namespace App\Http\Controllers\BackEnd;
 use App\Http\Controllers\Controller;
 use App\Services\BackEnd\MainService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;     // <-- Fixes all auth/logout errors cleanly
-use Illuminate\Support\Facades\DB;       // <-- Fixes DB query errors if used here
-use Illuminate\Support\Facades\Hash;     // <-- Fixes Hash::check errors
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
 class MainController extends Controller
@@ -28,14 +25,7 @@ class MainController extends Controller
         $user = Auth::user();
 
         if ($request->isMethod('get')) {
-            $activeSessions = [];
-
-            if (config('session.driver') === 'database') {
-                $activeSessions = DB::table('sessions')
-                    ->where('user_id', $user->id)
-                    ->orderBy('last_activity', 'desc')
-                    ->get();
-            }
+            $activeSessions = $this->mainService->getUserSessions($user);
 
             return view('BackEnd.auth.content.profile', compact('user', 'activeSessions'));
         }
@@ -50,16 +40,12 @@ class MainController extends Controller
                         'password'         => 'required|min:8|confirmed',
                     ]);
 
-                    if (!Hash::check($request->current_password, $user->password)) {
+                    if (! $this->mainService->updatePassword($user, $request->current_password, $request->password)) {
                         return response()->json([
                             'status'  => 'error',
                             'message' => 'Incorrect current password.'
                         ], 400);
                     }
-
-                    $user->password = Hash::make($request->password);
-                    $user->setRememberToken(Str::random(60));
-                    $user->save();
 
                     // Flush session cleanly using Facade context signatures
                     Auth::logout();
@@ -85,8 +71,7 @@ class MainController extends Controller
 
                 case 'toggle_google':
                     // 2. Clear out the saved unique identifier string via your Service layer or directly
-                    $user->google_id = null;
-                    $user->save();
+                    $this->mainService->disconnectGoogle($user);
 
                     return response()->json([
                         'status'  => 'success',
@@ -104,38 +89,25 @@ class MainController extends Controller
                     $targetSessionId = $request->input('session_id');
                     $currentSessionId = $request->session()->getId();
 
-                    if ($targetSessionId) {
-                        DB::table('sessions')
-                            ->where('user_id', $user->id)
-                            ->where('id', $targetSessionId)
-                            ->delete();
+                    $this->mainService->terminateSessions($user, $targetSessionId, $currentSessionId);
 
-                        if ($targetSessionId === $currentSessionId) {
-                            Auth::logout();
-                            $request->session()->invalidate();
-                            $request->session()->regenerateToken();
-
-                            return response()->json([
-                                'status'   => 'success',
-                                'message'  => 'Your active session has been terminated. Redirecting...',
-                                'redirect' => route('auth.login')
-                            ], 200);
-                        }
+                    if ($targetSessionId === $currentSessionId) {
+                        Auth::logout();
+                        $request->session()->invalidate();
+                        $request->session()->regenerateToken();
 
                         return response()->json([
-                            'status'  => 'success',
-                            'message' => 'The selected target device session has been successfully closed.'
+                            'status'   => 'success',
+                            'message'  => 'Your active session has been terminated. Redirecting...',
+                            'redirect' => route('auth.login')
                         ], 200);
                     }
 
-                    DB::table('sessions')
-                        ->where('user_id', $user->id)
-                        ->where('id', '!=', $currentSessionId)
-                        ->delete();
-
                     return response()->json([
                         'status'  => 'success',
-                        'message' => 'All other remote active browser sessions have been terminated successfully.'
+                        'message' => $targetSessionId
+                            ? 'The selected target device session has been successfully closed.'
+                            : 'All other remote active browser sessions have been terminated successfully.'
                     ], 200);
 
                 default:

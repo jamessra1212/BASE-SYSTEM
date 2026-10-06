@@ -4,7 +4,7 @@ A reusable Laravel RBAC + dynamic menu base template. Everything reusable lives 
 
 ## Stack
 
-- PHP 8.3, Laravel ^13.8
+- PHP 8.4+ (required by the locked Symfony 8 / activitylog v5 packages), Laravel ^13.8
 - spatie/laravel-permission ^8.3 — underlying roles/permissions
 - spatie/laravel-activitylog — audit trail
 - yajra/laravel-datatables 13.0 — all admin list screens
@@ -212,10 +212,18 @@ Single `php artisan db:seed` sets up everything, and `ActionPermissionSeeder` is
 3. Roles & Permissions → grant it to the relevant roles.
 4. (Optional) User Access → allow/deny for specific individuals.
 
+## Testing
+
+```bash
+php artisan test
+```
+
+Runs against in-memory SQLite (see `phpunit.xml`, which carries its own test-only `APP_KEY`), so no `.env` or MySQL is needed. `tests/Feature/Core` covers the security-sensitive paths: user create/update, Super Admin protection, avatar validation and serving, deactivated-user sign-out, `perm:` overrides, and menu-delete permission cleanup.
+
 ## Troubleshooting
 
 - **Stale cached config causing env-derived errors to persist after `.env` is fixed:** `php artisan config:clear` (not `config:cache` during dev).
-- **After moving/renaming classes:** `composer dump-autoload`.
+- **After moving/renaming classes:** `composer dump-autoload`. File names must match class names exactly, case included — Windows/XAMPP forgives `menu.php` for class `Menu`, a Linux server does not.
 - **A new controller/class "doesn't exist" even though the file looks right:** double-check the exact folder path matches the namespace — a misplaced file produces the same `BindingResolutionException` as a missing autoload entry.
 - **A new global helper function is "undefined":** confirm it's listed in `composer.json`'s `"files"` autoload array, then `composer dump-autoload` — adding the file alone isn't enough.
 - **New npm packages missing after cloning/pulling on a different machine:** `node_modules/` isn't committed; run `npm install`.

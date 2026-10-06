@@ -23,6 +23,18 @@ class AuthenticatePortalUser
                 ->with('error', 'Access denied. Please log in to your account first.');
         }
 
+        // A user deactivated mid-session is signed out on their next request,
+        // instead of keeping access until the session happens to expire
+        if (! Auth::user()->is_activated) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()
+                ->route('auth.login')
+                ->with('error', 'Your account has been deactivated. Please contact the administrator.');
+        }
+
         // If authenticated, allow the request to proceed to the controller
         return $next($request);
     }

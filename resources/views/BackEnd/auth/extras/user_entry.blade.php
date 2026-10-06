@@ -28,8 +28,8 @@
 
                     <div class="d-flex align-items-center justify-content-center border border-dashed rounded p-3 mb-4 bg-light bg-opacity-50 mx-auto" style="max-width: 420px;">
                         <div class="position-relative role-button me-3 group" onclick="document.getElementById('avatar_file_input').click();" style="cursor: pointer;">
-                            @if(isset($user) && !empty($user->img_slug) && $user->img_slug !== 'avatar-default.png')
-                                <img id="avatar_preview" src="{{ asset('storage/avatars/' . $user->img_slug) }}"
+                            @if(isset($user) && $user->avatar_data)
+                                <img id="avatar_preview" src="{{ $user->avatarUrl() }}"
                                      alt="Preview" class="rounded-circle border border-2 border-white shadow-sm" style="width: 65px; height: 65px; object-fit: cover;">
                             @else
                                 <div id="avatar_placeholder" class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center border border-2 border-white shadow-sm" style="width: 65px; height: 65px;">
@@ -44,8 +44,8 @@
 
                         <div class="flex-grow-1">
                             <label class="form-label small fw-bold text-dark mb-0" style="cursor: pointer;" onclick="document.getElementById('avatar_file_input').click();">Profile Picture Avatar</label>
-                            <span class="d-block text-muted small mt-0">Click avatar node component to browse image files (JPEG, PNG, max 2MB).</span>
-                            <input type="file" id="avatar_file_input" name="avatar" class="d-none" accept="image/jpeg,image/png,image/jpg">
+                            <span class="d-block text-muted small mt-0">Click avatar node component to browse image files (JPEG, PNG, WebP, max 2MB).</span>
+                            <input type="file" id="avatar_file_input" name="avatar" class="d-none" accept="image/jpeg,image/png,image/webp">
                             <div class="text-danger small fw-medium mt-1 invalid-feedback" id="avatar_error_node"></div>
                         </div>
                     </div>

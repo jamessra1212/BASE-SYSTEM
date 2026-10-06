@@ -38,21 +38,12 @@
                    aria-expanded="false"
                    style="padding-right: 12px !important;">
 
-                    @if(auth()->check() && !empty(auth()->user()->img_slug) && auth()->user()->img_slug !== 'avatar-default.png')
-                        <img src="{{ asset('storage/avatars/' . auth()->user()->img_slug) }}"
-                             alt="Avatar"
-                             class="rounded-circle bg-white border"
-                             width="30"
-                             height="30"
-                             style="object-fit: cover;">
-                    @else
-                        <img src="{{ asset('assets/img/userlogo.png') }}"
-                             alt="Avatar"
-                             class="rounded-circle bg-white border"
-                             width="30"
-                             height="30"
-                             style="object-fit: cover;">
-                    @endif
+                    <img src="{{ auth()->check() ? auth()->user()->avatarUrl() : asset('assets/img/userlogo.png') }}"
+                         alt="Avatar"
+                         class="rounded-circle bg-white border"
+                         width="30"
+                         height="30"
+                         style="object-fit: cover;">
 
                     @if(auth()->check())
                         <span class="d-none d-md-inline-block fw-semibold text-dark small">
@@ -67,21 +58,12 @@
                         <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
                             <div class="position-relative d-inline-block mb-2">
 
-                                @if(!empty(auth()->user()->img_slug) && auth()->user()->img_slug !== 'avatar-default.png')
-                                    <img src="{{ asset('storage/avatars/' . auth()->user()->img_slug) }}"
-                                         alt="Display Avatar"
-                                         class="rounded-circle border border-2 border-white shadow-sm"
-                                         width="68"
-                                         height="68"
-                                         style="object-fit: cover;">
-                                @else
-                                    <img src="{{ asset('assets/img/userlogo.png') }}"
-                                         alt="Display Avatar"
-                                         class="rounded-circle border border-2 border-white shadow-sm"
-                                         width="68"
-                                         height="68"
-                                         style="object-fit: cover;">
-                                @endif
+                                <img src="{{ auth()->check() ? auth()->user()->avatarUrl() : asset('assets/img/userlogo.png') }}"
+                                     alt="Display Avatar"
+                                     class="rounded-circle border border-2 border-white shadow-sm"
+                                     width="68"
+                                     height="68"
+                                     style="object-fit: cover;">
 
                             </div>
                             <h6 class="fw-bold text-truncate mb-0" style="letter-spacing: -0.1px;">

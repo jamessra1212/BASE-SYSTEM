@@ -100,7 +100,7 @@ class LoginController extends Controller
             $seconds = RateLimiter::availableIn($this->googleThrottleKey($request));
 
             // Dynamic fallback redirection depending on whether they are logged in or guest
-            $route = Auth::check() ? 'main.profile' : 'auth.login';
+            $route = Auth::check() ? 'app.main.profile' : 'auth.login';
             return redirect()->route($route)->withErrors([
                 'username' => "Too many login attempts. Please try again in {$seconds} seconds."
             ]);
@@ -111,7 +111,7 @@ class LoginController extends Controller
             $googleUser = Socialite::driver('google')->user();
         } catch (\Exception $e) {
             RateLimiter::hit($this->googleThrottleKey($request));
-            $route = Auth::check() ? 'main.profile' : 'auth.login';
+            $route = Auth::check() ? 'app.main.profile' : 'auth.login';
             return redirect()->route($route)->withErrors([
                 'username' => 'Google authentication failed. Please try again.'
             ]);
@@ -122,6 +122,16 @@ class LoginController extends Controller
         // =========================================================================
         if (Auth::check()) {
             $currentUser = Auth::user();
+
+            $linkedElsewhere = User::where('google_id', $googleUser->getId())
+                ->where('id', '!=', $currentUser->id)
+                ->exists();
+
+            if ($linkedElsewhere) {
+                return redirect()
+                    ->route('app.main.profile')
+                    ->withErrors(['username' => 'That Google account is already linked to another user.']);
+            }
 
             // Bind the Google ID to the authenticated user profile
             $currentUser->google_id = $googleUser->getId();
@@ -138,14 +148,18 @@ class LoginController extends Controller
         // CONDITION B: GUEST IS LOGGING IN (Authenticating from public login page)
         // =========================================================================
 
-        // First try finding them by google_id if they linked it previously, otherwise fallback to matching email
-        $user = \App\Models\User::query()
+        // Prefer an explicit google_id link; fall back to email only for accounts
+        // that haven't linked any Google identity yet, so a different Google
+        // account sharing the email can't sign in to an already-linked user
+        $user = User::query()
             ->where('is_activated', 1)
-            ->where(function($query) use ($googleUser) {
-                $query->where('google_id', $googleUser->getId())
-                    ->orWhere('email', $googleUser->getEmail());
-            })
-            ->first();
+            ->where('google_id', $googleUser->getId())
+            ->first()
+            ?? User::query()
+                ->where('is_activated', 1)
+                ->whereNull('google_id')
+                ->where('email', $googleUser->getEmail())
+                ->first();
 
         // 4. Fail if user does not exist in the system
         if (!$user) {

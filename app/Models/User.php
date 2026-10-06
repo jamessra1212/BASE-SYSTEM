@@ -12,6 +12,8 @@ use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
     'img_slug',
+    'avatar_data',
+    'avatar_mime',
     'fname',
     'lname',
     'minitial',
@@ -32,7 +34,8 @@ use Spatie\Permission\Traits\HasRoles;
 #[Hidden([
     'password',
     'remember_token',
-    'google_id'
+    'google_id',
+    'avatar_data',
 ])]
 class User extends Authenticatable
 {
@@ -76,10 +79,19 @@ class User extends Authenticatable
         return $this->can($permissionName);
     }
 
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole('Super Admin');
+    }
+
+    /**
+     * The ?v= stamp busts the browser cache whenever the profile changes,
+     * so a freshly uploaded avatar shows immediately.
+     */
     public function avatarUrl(): string
     {
         if ($this->avatar_data) {
-            return route('app.users.avatar', $this->id);
+            return route('app.users.avatar', ['user' => $this->id, 'v' => $this->updated_at?->timestamp]);
         }
 
         return route('app.users.avatar.default');

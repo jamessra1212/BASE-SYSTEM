@@ -5,6 +5,7 @@ namespace App\Core\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
@@ -42,11 +43,14 @@ class StoreUserRequest extends FormRequest
             'lname'      => ['required', 'string', 'max:255'],
 
             // Ignore the current user record context unique tracking pointer when updating
-            'username'   => ['required', 'string', 'min:4', 'max:50', 'unique:users,username,' . ($userId ?? 'NULL')],
-            'email'      => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . ($userId ?? 'NULL')],
+            'username'   => ['required', 'string', 'min:4', 'max:50', Rule::unique('users', 'username')->ignore($userId)],
+            'email'      => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
 
             // Password rules transition dynamically based on existence of creation vs update sequence state tracks
-            'password'   => $isUpdate ? ['nullable', 'string', 'min:4', 'confirmed'] : ['required', 'string', 'min:4', 'confirmed'],
+            'password'   => [$isUpdate ? 'nullable' : 'required', 'string', 'min:8', 'confirmed'],
+
+            // Raster images only — SVG is excluded since it can carry script
+            'avatar'     => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
 
             'categories' => ['required', 'in:1,2'],
             'role' => ['nullable', 'string', 'exists:roles,name'],
@@ -62,6 +66,8 @@ class StoreUserRequest extends FormRequest
             'username.unique' => 'This account username is already registered in the system.',
             'email.unique'    => 'This email address is already bound to an active profile.',
             'password.confirmed' => 'The system credentials confirmation match failed.',
+            'avatar.mimes'       => 'The avatar must be a JPEG, PNG or WebP image.',
+            'avatar.max'         => 'The avatar may not be larger than 2MB.',
         ];
     }
 }

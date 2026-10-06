@@ -80,7 +80,9 @@ class RoleController extends Controller
             ->filter(fn ($p) => str_starts_with($p->name, 'manage '))
             ->pluck('name');
 
-        $selectedActionPermissionNames = collect($request->input('permission_names', []));
+        // Only real permissions — an unknown name would make syncPermissions() throw
+        $selectedActionPermissionNames = Permission::whereIn('name', (array) $request->input('permission_names', []))
+            ->pluck('name');
 
         $role->syncPermissions(
             $selectedMenuPermissionNames

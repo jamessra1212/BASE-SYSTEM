@@ -222,6 +222,7 @@ Runs against in-memory SQLite (see `phpunit.xml`, which carries its own test-onl
 
 ## Troubleshooting
 
+- **Getting logged out after a while:** `SESSION_LIFETIME` in `.env` is an idle timeout in minutes (default 480 = 8 hours of no activity), applied after `php artisan config:clear`. Ticking **Remember me** at login keeps a user signed in past that until they log out.
 - **Stale cached config causing env-derived errors to persist after `.env` is fixed:** `php artisan config:clear` (not `config:cache` during dev).
 - **After moving/renaming classes:** `composer dump-autoload`. File names must match class names exactly, case included — Windows/XAMPP forgives `menu.php` for class `Menu`, a Linux server does not.
 - **A new controller/class "doesn't exist" even though the file looks right:** double-check the exact folder path matches the namespace — a misplaced file produces the same `BindingResolutionException` as a missing autoload entry.

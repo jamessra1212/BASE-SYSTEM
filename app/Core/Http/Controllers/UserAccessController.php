@@ -65,6 +65,8 @@ class UserAccessController extends Controller
     {
         $groupedMenus = Menu::leafMenusGroupedForCards();
         $allMenus = $groupedMenus->flatten();
+        // Action submenus (Destroy, Clear, ...) are toggled inside their parent's card
+        $allMenus = $allMenus->merge($allMenus->flatMap->actions)->unique('id');
 
         foreach ($allMenus as $menu) {
             $overrideOn = $request->boolean("menu_override.{$menu->id}");

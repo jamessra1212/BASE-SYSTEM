@@ -62,8 +62,8 @@ class User extends Authenticatable
     }
 
     /**
-     * Override-aware permission check: a per-user allow/deny beats the
-     * role-based permission. Use this instead of $user->can() anywhere
+     * Override-aware permission check: a per-user allow/deny (permission
+     * override first, then menu override) beats the role-based permission. Use this instead of $user->can() anywhere
      * an individual exception (like Kevin losing user.destroy) matters.
      */
     public function canAccessPermission(string $permissionName): bool
@@ -74,6 +74,17 @@ class User extends Authenticatable
 
         if ($override) {
             return $override->access === 'allow';
+        }
+
+        // Every menu owns a permission of the same name; the per-user menu
+        // override set on User Access applies to the route gate too, not
+        // just to the sidebar
+        $menuOverride = $this->menuOverrides()
+            ->whereHas('menu', fn ($q) => $q->where('permission_name', $permissionName))
+            ->first();
+
+        if ($menuOverride) {
+            return $menuOverride->access === 'allow';
         }
 
         return $this->can($permissionName);

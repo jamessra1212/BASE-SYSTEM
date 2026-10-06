@@ -3,6 +3,7 @@
 namespace Tests\Feature\Core;
 
 use App\Core\Models\Menu;
+use App\Core\Models\MenuUserOverride;
 use App\Core\Models\PermissionUserOverride;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -62,5 +63,73 @@ class PermissionAndMenuTest extends TestCase
             ->assertRedirect();
 
         $this->assertSame(['reports.export'], $role->fresh()->permissions->pluck('name')->all());
+    }
+
+    /**
+     * A "Manage Users" page with its routeless "Destroy" action submenu,
+     * the way MenuSeeder + ActionPermissionSeeder set it up.
+     */
+    protected function manageUsersWithDestroy(): array
+    {
+        $page = Menu::create(['name' => 'Manage Users', 'route' => 'core.users.index']);
+        $destroy = Menu::create(['name' => 'Manage Users Destroy', 'nav_name' => 'Delete', 'parent_id' => $page->id, 'is_nav' => false]);
+        Permission::create(['name' => 'manage users', 'menu_id' => $page->id]);
+
+        return [$page, $destroy];
+    }
+
+    public function test_action_submenus_get_toggles_on_roles_and_user_access_pages(): void
+    {
+        [, $destroy] = $this->manageUsersWithDestroy();
+        Permission::create(['name' => 'manage roles']);
+        Permission::create(['name' => 'manage access']);
+        $admin = User::factory()->create();
+        $admin->assignRole(Role::create(['name' => 'Super Admin']));
+        $role = Role::create(['name' => 'Editor']);
+
+        $this->actingAs($admin)
+            ->get(route('core.roles.permissions', $role))
+            ->assertOk()
+            ->assertSee('id="menu_ids-'.$destroy->id.'"', false);
+
+        $this->actingAs($admin)
+            ->get(route('core.access.index', ['user' => $admin->id]))
+            ->assertOk()
+            ->assertSee('name="menu_override['.$destroy->id.']"', false);
+    }
+
+    public function test_saving_role_permissions_keeps_checked_action_submenus(): void
+    {
+        [$page, $destroy] = $this->manageUsersWithDestroy();
+        Permission::create(['name' => 'manage roles']);
+        $admin = User::factory()->create();
+        $admin->assignRole(Role::create(['name' => 'Super Admin']));
+        $role = Role::create(['name' => 'Editor']);
+
+        $this->actingAs($admin)
+            ->put(route('core.roles.permissions.update', $role), ['menu_ids' => [$page->id, $destroy->id]])
+            ->assertRedirect();
+
+        $this->assertTrue($role->fresh()->hasPermissionTo($destroy->permission_name));
+        $this->assertTrue($role->fresh()->hasPermissionTo('manage users'));
+    }
+
+    public function test_menu_deny_override_blocks_the_action_route(): void
+    {
+        [$page, $destroy] = $this->manageUsersWithDestroy();
+        $role = Role::create(['name' => 'User Manager']);
+        $role->givePermissionTo('manage users', $page->permission_name, $destroy->permission_name);
+
+        $manager = User::factory()->create();
+        $manager->assignRole($role);
+        $victim = User::factory()->create();
+
+        MenuUserOverride::create(['user_id' => $manager->id, 'menu_id' => $destroy->id, 'access' => 'deny']);
+
+        $this->actingAs($manager)
+            ->delete(route('core.users.destroy'), ['id' => $victim->id])
+            ->assertForbidden();
+
+        $this->assertModelExists($victim);
     }
 }

@@ -83,6 +83,15 @@
                                             :overridden="$menuOverrideValue !== null"
                                             :roleDefault="$rolePermissionNames->contains($menu->permission_name)" />
 
+                                        @foreach ($menu->actions as $action)
+                                            @php $actionOverrideValue = $menuOverrides->get($action->id); @endphp
+                                            <x-permission-chip stateField="menu_state" overrideField="menu_override"
+                                                :id="$action->id" :label="$action->nav_name ?: $action->name"
+                                                :checked="$actionOverrideValue === 'allow'"
+                                                :overridden="$actionOverrideValue !== null"
+                                                :roleDefault="$rolePermissionNames->contains($action->permission_name)" />
+                                        @endforeach
+
                                         @foreach ($otherLinkedPermissions as $permission)
                                             @php $permOverrideValue = $permissionOverrides->get($permission->id); @endphp
                                             <x-permission-chip stateField="perm_state" overrideField="perm_override"

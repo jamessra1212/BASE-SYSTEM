@@ -116,13 +116,13 @@ A few permissions (`user.destroy`, `menus.destroy`, etc.) were originally seeded
 
 - **Per-item, override-aware.** ALL protected routes use a custom `perm:` middleware (`CheckPermissionOverride`), never Spatie's built-in `permission:` — it checks a per-user override first, falling back to the user's role.
 - **Two layers per resource:** a base gate (linked via Base Permission Name) covers the whole viewable block; destroy gets its own separate permission.
-- **Per-user overrides** on top of role defaults, for both menus (`menu_user_overrides`) and action permissions (`permission_user_overrides`).
+- **Per-user overrides** on top of role defaults, for both menus (`menu_user_overrides`) and action permissions (`permission_user_overrides`). The `perm:` middleware honours both: a permission override wins, then a menu override on the menu that owns that permission, then the role.
 - **Super Admin** bypasses everything via `Gate::before` in `AuthServiceProvider`.
 - Core system permissions (`manage menus`, `manage roles`, `manage users`, `manage access`, `manage settings`) are protected from deletion/renaming in code, since routes hardcode these strings.
 
 ### Roles & Permissions / User Access — card-grid UI
 
-Both pages use a card grid: one card per menu, grouped under its parent's name as a section heading. Any linked permission whose name starts with `"manage "` folds automatically into the menu's own "View / Access" toggle (checking one always grants both) — this is a convention (`str_starts_with`), not a hardcoded list.
+Both pages use a card grid: one card per menu, grouped under its parent's name as a section heading. A menu's routeless submenus (Destroy, Clear, unconnected quick-add items) appear as extra toggles inside its card rather than as cards of their own. Any linked permission whose name starts with `"manage "` folds automatically into the menu's own "View / Access" toggle (checking one always grants both) — this is a convention (`str_starts_with`), not a hardcoded list.
 
 - **Roles page:** simple switches, submits to `Role::syncPermissions()`.
 - **User Access page:** each item shows the role's own default (a plain "Allowed"/"Denied" badge) plus an **Override** switch. Flip Override on to reveal an Allow/Deny switch for items the role already grants; for items the role doesn't grant, Override alone is enough (the only meaningful action there is "allow anyway"). Flip Override back off and the override row is deleted — clean inheritance restored.

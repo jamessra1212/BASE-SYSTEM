@@ -97,6 +97,17 @@ class Menu extends Model
         return $names;
     }
 
+    /**
+     * Routeless children: action gates like Destroy/Clear (or quick-add
+     * items not yet connected to a page). They don't get a card of their
+     * own on the Roles / User Access screens — they're toggles inside
+     * their parent's card instead.
+     */
+    public function actions(): HasMany
+    {
+        return $this->hasMany(Menu::class, 'parent_id')->whereNull('route')->orderBy('order');
+    }
+
     public function overrides(): HasMany
     {
         return $this->hasMany(MenuUserOverride::class);
@@ -137,7 +148,7 @@ class Menu extends Model
      */
     public static function leafMenusGroupedForCards()
     {
-        $leafMenus = static::with(['parent', 'linkedPermissions'])
+        $leafMenus = static::with(['parent', 'linkedPermissions', 'actions'])
             ->whereNotNull('route')
             ->orderBy('order')
             ->get();

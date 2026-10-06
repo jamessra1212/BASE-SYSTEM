@@ -35,6 +35,11 @@
                             <x-role-permission-chip name="menu_ids" :id="$menu->id" :value="$menu->id"
                                 label="View / Access" :checked="$rolePermissionNames->contains($menu->permission_name)" />
 
+                            @foreach ($menu->actions as $action)
+                                <x-role-permission-chip name="menu_ids" :id="$action->id" :value="$action->id"
+                                    :label="$action->nav_name ?: $action->name" :checked="$rolePermissionNames->contains($action->permission_name)" />
+                            @endforeach
+
                             @foreach ($otherLinkedPermissions as $permission)
                                 <x-role-permission-chip name="permission_names" :id="$permission->id" :value="$permission->name"
                                     :label="$permission->name" :checked="$rolePermissionNames->contains($permission->name)" />

@@ -29,6 +29,7 @@ class ActionPermissionSeeder extends Seeder
             'manage users'    => 'Manage Users',
             'manage access'   => 'User Access',
             'manage settings' => 'App Settings',
+            'manage logs'     => 'Activity Logs',
         ];
 
         foreach ($links as $permissionName => $menuName) {
@@ -77,6 +78,14 @@ class ActionPermissionSeeder extends Seeder
         $admin = Role::where('name', 'Admin')->first();
         if ($admin) {
             $admin->givePermissionTo($createdPermissionNames);
+        }
+
+        // Super Admin already passes every check via Gate::before; granting
+        // everything explicitly just makes the Roles / User Access toggles
+        // show it as allowed instead of "not in role"
+        $superAdmin = Role::where('name', 'Super Admin')->first();
+        if ($superAdmin) {
+            $superAdmin->syncPermissions(Permission::pluck('name'));
         }
     }
 }

@@ -65,5 +65,12 @@ class MainService
             // Flush all peripheral application connections except the current machine window context
             $query->where('id', '!=', $currentId)->delete();
         }
+
+        // Deleting the session row alone isn't enough: a device holding a
+        // "remember me" cookie would sign itself straight back in. Laravel
+        // keeps one remember token per user, so rotating it cancels every
+        // remembered device at once.
+        $user->setRememberToken(Str::random(60));
+        $user->save();
     }
 }

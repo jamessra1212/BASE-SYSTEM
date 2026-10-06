@@ -103,6 +103,12 @@ class MainController extends Controller
                         ], 200);
                     }
 
+                    // The token rotation above also voided this device's own remember
+                    // cookie; re-issue it so the device doing the terminating stays remembered
+                    if ($request->hasCookie(Auth::guard()->getRecallerName())) {
+                        Auth::login($user, true);
+                    }
+
                     return response()->json([
                         'status'  => 'success',
                         'message' => $targetSessionId
